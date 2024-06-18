@@ -10,6 +10,8 @@ import {
 } from "react";
 import { Web5 } from "@web5/api";
 
+import ProtocolDefinition from "../protocols/protocol.json";
+
 const DID_STORAGE_KEY = "did-key";
 
 interface Web5ContextType {
@@ -44,11 +46,11 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
       setWeb5(web5);
       setDid(did);
 
+      configureProtocol(web5, did);
+
       localStorage.setItem(DID_STORAGE_KEY, did);
     } catch (error) {
       // console.log("error", error);
-    } finally {
-      setLoading(false);
     }
   }, []);
 
@@ -60,6 +62,47 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
     setWeb5(null);
     setDid(null);
     localStorage.removeItem(DID_STORAGE_KEY);
+  };
+
+  const configureProtocol = async (web5: Web5, did: string) => {
+    try {
+      const { protocols, status } = await web5.dwn.protocols.query({
+        message: {
+          filter: {
+            protocol: ProtocolDefinition.protocol,
+          },
+        },
+      });
+
+      if (status.code !== 200) {
+        alert("Error querying protocols");
+        console.error("Error querying protocols", status);
+        return;
+      }
+
+      if (protocols.length > 0) {
+        console.log("Protocol already exists");
+        return;
+      }
+
+      const { status: configureStatus, protocol } =
+        await web5.dwn.protocols.configure({
+          message: {
+            definition: ProtocolDefinition,
+          },
+        });
+
+      console.log("Protocol configured", configureStatus, protocol);
+
+      if (!protocol) return;
+
+      const { status: configureRemoteStatus } = await protocol.send(did);
+      console.log("Protocol configured on remote DWN", configureRemoteStatus);
+    } catch (error) {
+      console.log("error");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const memoizedValue = useMemo(

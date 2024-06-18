@@ -1,0 +1,19 @@
+{
+  "protocol": "https://schema.org",
+  "published": true,
+  "types": {
+    "message": {
+      "schema": "https://schema.org/schemas/message",
+      "dataFormats": ["application/json"]
+    }
+  },
+  "structure": {
+    "message": {
+      "$actions": [
+        { "who": "anyone", "can": ["create", "update"] },
+        { "who": "author", "of": "message", "can": ["read"] },
+        { "who": "recipient", "of": "message", "can": ["read"] }
+      ]
+    }
+  }
+}
