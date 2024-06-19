@@ -5,6 +5,10 @@
     "message": {
       "schema": "https://schema.org/schemas/message",
       "dataFormats": ["application/json"]
+    },
+    "contact": {
+      "schema": "https://schema.org/schemas/contact",
+      "dataFormats": ["application/json"]
     }
   },
   "structure": {
@@ -13,6 +17,13 @@
         { "who": "anyone", "can": ["create", "update"] },
         { "who": "author", "of": "message", "can": ["read"] },
         { "who": "recipient", "of": "message", "can": ["read"] }
+      ]
+    },
+    "contact": {
+      "$actions": [
+        { "who": "anyone", "can": ["create", "update"] },
+        { "who": "author", "of": "contact", "can": ["read"] },
+        { "who": "recipient", "of": "contact", "can": ["read"] }
       ]
     }
   }

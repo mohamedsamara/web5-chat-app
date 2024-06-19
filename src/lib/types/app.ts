@@ -25,3 +25,9 @@ export type Msg = {
   showInfoBar: boolean;
   isMe: boolean;
 };
+
+export type Contact = {
+  did: string;
+  name: string;
+  photo: string;
+};
