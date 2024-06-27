@@ -1,0 +1,11 @@
+export enum CHAT_MSG_TYPES {
+  TEXT = "TEXT",
+  VIDEO = "VIDEO",
+  PHOTO = "PHOTO",
+}
+
+export enum CHAT_TYPES {
+  CONVERSATION = "CONVERSATION",
+  GROUP = "GROUP",
+  DUMMY = "DUMMY",
+}

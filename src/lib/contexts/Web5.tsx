@@ -2,7 +2,6 @@ import {
   createContext,
   PropsWithChildren,
   useCallback,
-  //   useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -10,7 +9,7 @@ import {
 } from "react";
 import { Web5 } from "@web5/api";
 
-import ProtocolDefinition from "../protocols/protocol.json";
+import { ProtocolDefinition } from "lib/protocols";
 
 const DID_STORAGE_KEY = "did-key";
 
@@ -33,12 +32,15 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
   const [web5, setWeb5] = useState<Web5 | null>(null);
   const [did, setDid] = useState<string | null>(null);
 
+  useEffect(() => {
+    connect();
+  }, []);
+
   const connect = useCallback(async () => {
     try {
-      setLoading(true);
       const storedDid = localStorage.getItem(DID_STORAGE_KEY);
 
-      const { web5, did } = await Web5.connect();
+      const { web5, did } = await Web5.connect({ sync: "2s" });
       if (did !== storedDid) {
         console.log("");
       }
@@ -53,10 +55,6 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
       // console.log("error", error);
     }
   }, []);
-
-  useEffect(() => {
-    connect();
-  }, [connect]);
 
   const disconnect = () => {
     setWeb5(null);
@@ -99,7 +97,7 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
       const { status: configureRemoteStatus } = await protocol.send(did);
       console.log("Protocol configured on remote DWN", configureRemoteStatus);
     } catch (error) {
-      console.log("error");
+      console.log("error", error);
     } finally {
       setLoading(false);
     }

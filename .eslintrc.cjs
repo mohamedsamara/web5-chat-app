@@ -9,5 +9,8 @@ module.exports = {
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
   plugins: ["react-refresh"],
-  rules: {},
+  rules: {
+    "@typescript-eslint/ban-ts-comment": "off",
+    "react-hooks/exhaustive-deps": "off",
+  },
 };
