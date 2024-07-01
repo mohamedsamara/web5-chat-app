@@ -1,10 +1,11 @@
 import { Chat } from "lib/types";
-import { useChat } from "lib/hooks";
+import { useChat, useChatMsgs } from "lib/hooks";
 import { useEffect } from "react";
 import Msg from "./Msg";
 
 const MsgList = ({ chat }: { chat: Chat }) => {
-  const { chatMsgs, fetchChatMsgs } = useChat();
+  const { fetchChatMsgs } = useChat();
+  const { msgs } = useChatMsgs(chat);
 
   useEffect(() => {
     fetchChatMsgs(chat.recordId);
@@ -12,7 +13,7 @@ const MsgList = ({ chat }: { chat: Chat }) => {
 
   return (
     <div>
-      {chatMsgs.map((msg) => (
+      {msgs.map((msg) => (
         <div key={msg.uid} className="mb-3">
           <Msg msg={msg} />
         </div>

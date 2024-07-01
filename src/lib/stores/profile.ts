@@ -7,7 +7,7 @@ const initialState: Profile = {
   uid: "",
   did: "",
   name: "",
-  photo: "",
+  avatar: null,
 };
 
 export const dbProfileAtom = atom<Profile>(initialState);

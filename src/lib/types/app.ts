@@ -4,11 +4,7 @@ export type ChatType = keyof typeof CHAT_TYPES;
 export type MsgType = keyof typeof CHAT_MSG_TYPES;
 
 /* FORMS */
-export type CreateProfilePayload = {
-  name: string;
-};
-
-export type UpdateProfilePayload = {
+export type ProfilePayload = {
   name: string;
 };
 
@@ -18,23 +14,29 @@ export type CreateMsgPayload = {
 };
 
 /* RECORDS */
+export type Avatar = {
+  recordId: string;
+  photo: Blob | null;
+};
 
 export type Profile = {
   recordId: string;
   uid: string;
   did: string;
   name: string;
-  photo: string;
+  avatar: Avatar | null;
 };
 
 export type ChatMember = Profile;
+export type Sender = Profile;
 
 export type Chat = {
   recordId: string;
   uid: string;
   name: string;
-  photo: string;
+  avatar: Avatar | null;
   type: ChatType;
+  memberDids: string[];
   members: ChatMember[];
   ownerDid: string;
   // lastMsg: LastMsg;
@@ -49,22 +51,11 @@ export type ChatMsg = {
   recordId: string;
   uid: string;
   sender: Sender;
+  senderDid: string;
   content: string;
   type: MsgType;
   createdAt: number;
   showInfoBar: boolean;
   isMe: boolean;
   // chatId: string;
-};
-
-export type Sender = {
-  did: string;
-  name: string;
-  photo: string;
-};
-
-export type Recipient = {
-  did: string;
-  name: string;
-  photo: string;
 };

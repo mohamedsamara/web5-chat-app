@@ -1,4 +1,5 @@
 import { cn } from "lib/utils";
+import { Avatar } from "lib/types";
 import UserAvatar from "components/UserAvatar";
 
 type Props = {
@@ -6,7 +7,7 @@ type Props = {
   end: boolean;
   showAvatar: boolean;
   showName: boolean;
-  avatar: string;
+  avatar: Avatar | null;
   name: string;
   text: string;
   time: string;
@@ -31,7 +32,7 @@ const ChatBubble = ({
     >
       <div className={cn(end ? "order-2" : "order-1")}>
         <div className="w-8 h-8">
-          {showAvatar && <UserAvatar src={avatar} alias={name} />}
+          {showAvatar && <UserAvatar avatar={avatar} alias={name} />}
         </div>
       </div>
       <div

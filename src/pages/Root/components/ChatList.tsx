@@ -21,7 +21,7 @@ const ChatList = ({ chats }: { chats: Chat[] }) => {
               }
             >
               <div className="flex flex-row items-center gap-2">
-                <UserAvatar src={chat.photo ?? ""} alias={chat.name ?? ""} />
+                <UserAvatar avatar={chat.avatar} alias={chat.name} />
                 <h4>{chat.name || "Dummy"}</h4>
               </div>
             </NavLink>

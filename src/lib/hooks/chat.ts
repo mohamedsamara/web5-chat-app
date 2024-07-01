@@ -3,12 +3,12 @@ import { v4 as uuidv4 } from "uuid";
 import { useAtom } from "jotai";
 
 import { useWeb5 } from "lib/contexts";
-import { CreateMsgPayload } from "lib/types";
+import { Chat, CreateMsgPayload } from "lib/types";
 import ProtocolDefinition from "lib/protocols/protocol.json";
 import { CHAT_MSG_TYPES, CHAT_TYPES } from "../constants";
 import { chatsAtom, msgsAtom, selectedChatAtom } from "lib/stores";
 import {
-  getChatMembers,
+  getConversationRecipientDid,
   getRecords,
   handleError,
   processChats,
@@ -21,6 +21,16 @@ export const useSelectedChat = (chatId: string) => {
     useMemo(() => selectedChatAtom(chatId), [chatId])
   );
   return { chat: selectedChat || null };
+};
+
+export const useChatMsgs = (chat: Chat) => {
+  const { did } = useWeb5();
+  const [chatMsgs] = useAtom(msgsAtom);
+  const processedMsgs = useMemo(() => {
+    if (!did) return [];
+    return processMsgs(chatMsgs, chat, did);
+  }, [chatMsgs]);
+  return { msgs: processedMsgs };
 };
 
 export const useChat = () => {
@@ -36,16 +46,13 @@ export const useChat = () => {
       const isPresent = await isChatPresent(recipientDid);
       if (isPresent) return;
 
-      const members = await getChatMembers(web5, [recipientDid]);
-      if (!members) throw new Error("Members not found.");
-
       const { record } = await web5.dwn.records.create({
         data: {
           uid: uuidv4(),
           name: "",
-          photo: "",
+          avatar: "",
           type: CHAT_TYPES.CONVERSATION,
-          members: [...members, profile],
+          memberDids: [did, recipientDid],
           ownerDid: did,
           createdAt: new Date().getTime(),
           updatedAt: new Date().getTime(),
@@ -82,7 +89,7 @@ export const useChat = () => {
       });
 
       const chats = await getRecords(response);
-      const processedChats = processChats(chats, did);
+      const processedChats = await processChats(web5, did, chats);
 
       setChats(processedChats);
     } catch (error) {
@@ -105,8 +112,7 @@ export const useChat = () => {
       });
 
       const msgs = await getRecords(response);
-      const processedMsgs = processMsgs(msgs, did);
-      setChatMsgs(processedMsgs);
+      setChatMsgs(msgs);
     } catch (error) {
       console.log("error", error);
     }
@@ -117,8 +123,7 @@ export const useChat = () => {
       if (!web5 || !did) return;
 
       // Default to one-to-one conversation.
-      const theirDids = payload.chat.members.filter((m) => m.did !== did);
-      const recipientDid = theirDids[0].did;
+      const recipientDid = getConversationRecipientDid(payload.chat, did);
       const parentId = payload.chat.recordId;
 
       const { record } = await web5.dwn.records.create({
@@ -126,11 +131,7 @@ export const useChat = () => {
           uid: uuidv4(),
           type: CHAT_MSG_TYPES.TEXT,
           content: payload.content,
-          sender: {
-            did: profile.did,
-            name: profile.name,
-            photo: profile.photo,
-          },
+          senderDid: profile.did,
           createdAt: new Date().getTime(),
         },
         message: {
@@ -177,7 +178,6 @@ export const useChat = () => {
 
   return {
     chats,
-    chatMsgs,
     createConversation,
     fetchChats,
     fetchChatMsgs,
