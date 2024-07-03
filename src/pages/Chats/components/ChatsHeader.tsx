@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { useWeb5 } from "lib/contexts";
 import { useProfile } from "lib/hooks";
@@ -16,24 +16,18 @@ import CopyButton from "components/CopyButton";
 import UserAvatar from "components/UserAvatar";
 import Dialog from "components/Dialog";
 import CreateConversation from "./CreateConversation";
-import Profile from "./Profile";
+import { ProfileForm, UploadAvatar } from "pages/Profile/components";
 
 const ChatsHeader = () => {
-  const { profile, fetchProfile } = useProfile();
+  const { profile, profileCreated } = useProfile();
   const { did } = useWeb5();
   const [profileModalOpen, setProfileModal] = useState(false);
   const onProfileModalOpen = () => setProfileModal(true);
   const onProfileModalClose = () => setProfileModal(false);
 
-  const isProfileCreated = profile?.recordId ? true : false;
-
-  useEffect(() => {
-    fetchProfile();
-  }, []);
-
   return (
     <>
-      <header className="flex justify-between items-center h-12 p-4 border-b border-b-gray-100">
+      <header className="flex justify-between items-center h-12 px-3 border-b border-b-gray-100">
         <div className="flex-1">
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>
@@ -42,7 +36,7 @@ const ChatsHeader = () => {
                 variant="ghost"
                 className="relative rounded-full aspect-1 p-0 w-8 h-8"
               >
-                <UserAvatar avatar={profile.avatar} alias={profile.name} />
+                <UserAvatar src={profile.avatar} alias={profile.name} />
               </Button>
             </DropdownMenuTrigger>
 
@@ -59,7 +53,7 @@ const ChatsHeader = () => {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={onProfileModalOpen}>
-                {isProfileCreated ? "Edit Profile" : "Create Profile"}
+                {profileCreated ? "Edit Profile" : "Create Profile"}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -68,17 +62,15 @@ const ChatsHeader = () => {
         <CreateConversation />
       </header>
 
-      {/* Profile Modal */}
+      {/* Profile Form Modal */}
       <Dialog
-        title={isProfileCreated ? "Edit Profile" : "Create Profile"}
+        title={profileCreated ? "Edit Profile" : "Create Profile"}
         open={profileModalOpen}
         onOpenChange={setProfileModal}
         onClose={onProfileModalClose}
       >
-        <Profile
-          isProfileCreated={isProfileCreated}
-          onDone={onProfileModalClose}
-        />
+        <UploadAvatar />
+        <ProfileForm onDone={onProfileModalClose} />
       </Dialog>
     </>
   );

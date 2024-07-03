@@ -13,10 +13,6 @@
     "profile": {
       "schema": "https://schema.org/schemas/profile",
       "dataFormats": ["application/json"]
-    },
-    "avatar": {
-      "schema": "https://schema.org/schemas/avatar",
-      "dataFormats": ["image/jpeg", "image/png"]
     }
   },
   "structure": {
@@ -57,9 +53,6 @@
       }
     },
     "profile": {
-      "$actions": [{ "who": "anyone", "can": ["create", "read"] }]
-    },
-    "avatar": {
       "$actions": [{ "who": "anyone", "can": ["create", "read"] }]
     }
   }

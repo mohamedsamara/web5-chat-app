@@ -1,12 +1,12 @@
 import { useRef, ChangeEvent, useState } from "react";
 import { Loader2 } from "lucide-react";
 
-import { fileToBlob } from "lib/utils";
+import { fileToBase64 } from "lib/utils";
 import { useProfile } from "lib/hooks";
 import UserAvatar from "components/UserAvatar";
 import { Button } from "components/ui/button";
 
-const EditUserPhoto = () => {
+const UploadAvatar = ({ onDone }: { onDone?: () => void }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { profile, uploadAvatar } = useProfile();
   const hiddenFileInput = useRef<HTMLInputElement | null>(null);
@@ -19,14 +19,16 @@ const EditUserPhoto = () => {
     try {
       setIsSubmitting(true);
       const photo = event.target?.files?.[0] as File;
-      const blob = fileToBlob(photo);
-      await uploadAvatar(blob);
+
+      const base64 = await fileToBase64(photo);
+      await uploadAvatar(base64);
 
       event.target.value = "";
     } catch (error) {
       console.log("error", error);
     } finally {
       setIsSubmitting(false);
+      onDone && onDone();
     }
   };
 
@@ -34,7 +36,7 @@ const EditUserPhoto = () => {
     <>
       <div className="flex items-center justify-between">
         <div className="mr-4">
-          <UserAvatar avatar={profile.avatar} alias={profile.name} />
+          <UserAvatar src={profile.avatar} alias={profile.name} />
         </div>
         <Button onClick={onClick} disabled={isSubmitting}>
           {isSubmitting && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
@@ -52,4 +54,4 @@ const EditUserPhoto = () => {
   );
 };
 
-export default EditUserPhoto;
+export default UploadAvatar;

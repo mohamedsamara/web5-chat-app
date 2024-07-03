@@ -5,24 +5,18 @@ import { useWeb5 } from "lib/contexts";
 import { ProtocolDefinition } from "lib/protocols";
 import { ProfilePayload } from "lib/types";
 
-import { profileAtom } from "lib/stores";
-import { fetchAvatar, updateRecord } from "lib/utils";
+import {
+  profileAtom,
+  profileCreatedAtom,
+  profileFetchedAtom,
+} from "lib/stores";
+import { updateRecord } from "lib/utils";
 
 export const useProfile = () => {
   const { web5, did } = useWeb5();
   const [profile, setProfile] = useAtom(profileAtom);
-
-  // const fetchAvatar = async () => {
-  //   try {
-  //     if (!web5 || !did) return;
-  //     const avatar = await fetchUserAvatar(web5, did);
-
-  //     setProfile({ ...profile, avatar });
-
-  //   } catch (error) {
-  //     console.log("error", error);
-  //   }
-  // };
+  const [profileFetched, setProfileFetched] = useAtom(profileFetchedAtom);
+  const [profileCreated] = useAtom(profileCreatedAtom);
 
   const fetchProfile = async () => {
     try {
@@ -39,20 +33,15 @@ export const useProfile = () => {
         },
       });
 
-      let profileFetched = null;
-      if (response.record) {
-        const data = await response.record.data.json();
-        profileFetched = {
-          ...data,
-          recordId: response.record.id,
-        };
-      }
+      if (!response.record) return;
 
-      const avatar = await fetchAvatar(web5, did);
+      const data = await response.record.data.json();
 
-      setProfile({ ...profile, ...profileFetched, avatar });
+      setProfile({ ...profile, ...data, recordId: response.record.id });
     } catch (error) {
       console.log("error", error);
+    } finally {
+      setProfileFetched(true);
     }
   };
 
@@ -83,7 +72,6 @@ export const useProfile = () => {
         data: {
           uid: uuidv4(),
           did,
-          photo: null,
           ...payload,
         },
         message: {
@@ -94,50 +82,30 @@ export const useProfile = () => {
           published: true,
         },
       });
-      const data = await response.record?.data.json();
-      setProfile({ ...profile, ...data });
+
+      if (!response.record) return;
+
+      const data = await response.record.data.json();
+      setProfile({ ...profile, ...data, recordId: response.record.id });
     } catch (error) {
       console.log("error", error);
     }
   };
 
-  const createAvatar = async (blob: Blob) => {
+  const uploadAvatar = async (base64: string) => {
     try {
       if (!web5) return;
-
-      const { record } = await web5.dwn.records.create({
-        data: blob,
-        message: {
-          protocol: ProtocolDefinition.protocol,
-          protocolPath: "avatar",
-          schema: ProtocolDefinition.types.avatar.schema,
-          dataFormat: ProtocolDefinition.types.avatar.dataFormats[1],
-          published: true,
+      await updateRecord(
+        web5,
+        profile.recordId,
+        {
+          ...profile,
+          avatar: base64,
         },
-      });
+        true
+      );
 
-      if (!record) return;
-
-      const photo = await record?.data.blob();
-      const avatar = { photo, recordId: record.id };
-
-      setProfile({ ...profile, avatar });
-    } catch (error) {
-      console.log("Error", error);
-    }
-  };
-
-  const uploadAvatar = async (blob: Blob) => {
-    try {
-      if (!web5) return;
-      if (profile.avatar?.recordId) {
-        await web5.dwn.records.delete({
-          message: {
-            recordId: profile.avatar.recordId,
-          },
-        });
-      }
-      await createAvatar(blob);
+      await fetchProfile();
     } catch (error) {
       console.log("error", error);
     }
@@ -145,6 +113,8 @@ export const useProfile = () => {
 
   return {
     profile,
+    profileCreated,
+    profileFetched,
     fetchProfile,
     createProfile,
     updateProfile,

@@ -17,7 +17,7 @@ const Msg = ({ msg }: Props) => {
       noStyles={!msg.showInfoBar}
       showAvatar={msg.showInfoBar}
       avatar={msg.sender.avatar}
-      name={msg.sender.name}
+      name={msg?.sender?.name}
       text={msg.content}
       time={msgTime}
     />

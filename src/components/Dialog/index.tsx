@@ -19,10 +19,17 @@ type Props = PropsWithChildren & {
   trigger?: JSX.Element;
 };
 
-const Dialog = ({ title, open, onOpenChange, onClose, children }: Props) => {
+const Dialog = ({
+  title,
+  trigger,
+  open,
+  onOpenChange,
+  onClose,
+  children,
+}: Props) => {
   return (
     <RadixDialog open={open} onOpenChange={onOpenChange}>
-      <DialogTrigger asChild></DialogTrigger>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]" hideClose>
         <DialogHeader>
           <div className="flex justify-between items-center">

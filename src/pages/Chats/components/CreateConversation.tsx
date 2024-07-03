@@ -1,13 +1,14 @@
+import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
+import { PencilIcon, Loader2 } from "lucide-react";
 
+import { useChat } from "lib/hooks";
 import { REQUIRED_FIELD } from "lib/validations";
-
-import { useProfile } from "lib/hooks";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
+import Dialog from "components/Dialog";
 import {
   Form,
   FormControl,
@@ -16,56 +17,69 @@ import {
   FormLabel,
   FormMessage,
 } from "components/ui/form";
-import EditUserPhoto from "./EditUserPhoto";
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: REQUIRED_FIELD }),
+  did: z.string().min(1, { message: REQUIRED_FIELD }),
 });
 
-const Profile = ({
-  isProfileCreated,
-  onDone,
-}: {
-  isProfileCreated: boolean;
-  onDone: () => void;
-}) => {
-  const { profile, createProfile, updateProfile } = useProfile();
+type ButtonType = "full" | "icon";
 
+const CreateConversation = ({ btnType = "icon" }: { btnType?: ButtonType }) => {
+  const [modalOpen, setModalOpen] = useState(false);
+  const onModalOpen = () => setModalOpen(true);
+  const onModalClose = () => setModalOpen(false);
+  const { createConversation } = useChat();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: profile.name,
+      did: "",
     },
   });
+
   const { isValid, isDirty, isSubmitting } = form.formState;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
-      if (isProfileCreated) {
-        await updateProfile({ name: values.name });
-      } else {
-        await createProfile({ name: values.name });
-      }
+      await createConversation(values.did);
+      form.reset();
     } catch (error) {
       console.log("error", error);
     } finally {
-      onDone();
+      onModalClose();
     }
   };
 
   return (
-    <>
-      <EditUserPhoto />
+    <Dialog
+      title="New Private Conversation"
+      open={modalOpen}
+      onOpenChange={setModalOpen}
+      onClose={onModalClose}
+      trigger={
+        btnType === "icon" ? (
+          <Button
+            size="icon"
+            variant="ghost"
+            className="relative rounded-full aspect-1 p-0 w-8 h-8"
+            onClick={onModalOpen}
+          >
+            <PencilIcon className="w-4 h-4" />
+          </Button>
+        ) : (
+          <Button onClick={onModalOpen}>Start Chatting</Button>
+        )
+      }
+    >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
           <FormField
-            name="name"
+            name="did"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Name</FormLabel>
+                <FormLabel>Did</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} />
+                  <Input placeholder="did:..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -73,12 +87,12 @@ const Profile = ({
           />
           <Button type="submit" disabled={!isValid || !isDirty || isSubmitting}>
             {isSubmitting && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
-            Save
+            Create
           </Button>
         </form>
       </Form>
-    </>
+    </Dialog>
   );
 };
 
-export default Profile;
+export default CreateConversation;

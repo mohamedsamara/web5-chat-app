@@ -10,6 +10,7 @@ import {
 import { Web5 } from "@web5/api";
 
 import { ProtocolDefinition } from "lib/protocols";
+import SpinnerOverlay from "components/SpinnerOverlay";
 
 const DID_STORAGE_KEY = "did-key";
 
@@ -117,7 +118,7 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
 
   return (
     <Web5Context.Provider value={memoizedValue}>
-      {loading ? <div>Loading...</div> : children}
+      {loading ? <SpinnerOverlay /> : children}
     </Web5Context.Provider>
   );
 };

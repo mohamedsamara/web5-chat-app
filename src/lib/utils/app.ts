@@ -1,5 +1,5 @@
 import { RecordsQueryResponse, Web5 } from "@web5/api";
-import { Avatar, Chat, ChatMember, ChatMsg, Profile } from "lib/types";
+import { Chat, ChatMember, ChatMsg, Profile } from "lib/types";
 import { ProtocolDefinition } from "lib/protocols";
 
 export const handleError = (error: unknown) => {
@@ -66,7 +66,7 @@ export const getShowInfoBar = (msgs: ChatMsg[], msg: ChatMsg, i: number) => {
   const previous = getPreviousMsg(msgs, i);
   if (!previous) return true;
 
-  const isSameSender = previous.senderDid === msg.senderDid;
+  const isSameSender = previous.sender.did === msg.sender.did;
   const isSameDay = datesAreOnSameDay(previous.createdAt, msg.createdAt);
 
   if (isSameSender && !isSameDay) return true;
@@ -86,91 +86,70 @@ export const processMsgs = (msgs: ChatMsg[], chat: Chat, did: string) => {
     .sort((a, b) => a.createdAt - b.createdAt)
     .map((msg, i) => {
       msg.showInfoBar = getShowInfoBar(msgs, msg, i);
-      msg.isMe = did === msg.senderDid;
-      const sender = chat.members.find((m) => m.did === msg.senderDid);
-      if (sender) msg.sender = sender;
-
+      msg.isMe = did === msg.sender.did;
       return msg;
     });
 };
 
-export const processChats = async (web5: Web5, did: string, chats: Chat[]) => {
-  try {
-    const processedChats = await Promise.all(
-      chats.map(async (chat) => {
-        /* CONVERSATION chat photo will be the contact photo */
-        if (chat.type === "CONVERSATION") {
-          const members = await getChatMembers(web5, chat.memberDids);
-          const contact = members.find((m) => m.did !== did);
+export const processChat = async (
+  web5: Web5,
+  did: string,
+  chat: Chat,
+  profile: Profile
+) => {
+  /* CONVERSATION chat photo will be the contact photo */
+  if (chat.type === "CONVERSATION") {
+    const recipientDid = getConversationRecipientDid(chat, did);
+    const contact = await fetchChatMember(web5, recipientDid);
 
-          if (!contact) throw new Error("Something went wrong!");
-
-          return {
-            ...chat,
-            name: contact?.name ?? "",
-            avatar: contact?.avatar || null,
-            members,
-          };
-        }
-
-        return chat;
-      })
-    );
-    return processedChats;
-  } catch (error) {
-    return [];
+    if (contact) {
+      return {
+        ...chat,
+        name: contact.name,
+        avatar: contact.avatar,
+        members: [profile, contact],
+      };
+    }
+    return chat;
   }
+  return chat;
 };
 
-export const fetchAvatar = async (web5: Web5, did: string) => {
-  try {
-    if (!web5) return null;
-
-    console.log("fetch avatar for:", did);
-
-    const response = await web5.dwn.records.read({
-      from: did,
-      message: {
-        filter: {
-          protocol: ProtocolDefinition.protocol,
-          protocolPath: "avatar",
-          schema: ProtocolDefinition.types.avatar.schema,
-          author: did,
-        },
-      },
-    });
-
-    if (!response.record) return null;
-    const photo = await response.record.data.blob();
-    return { photo, recordId: response.record.id };
-  } catch (error) {
-    throw new Error("Failed to fetch avatar");
-  }
+export const processChats = async (
+  web5: Web5,
+  did: string,
+  chats: Chat[],
+  profile: Profile
+) => {
+  const processedChats = await Promise.all(
+    chats.map(async (chat) => {
+      return await processChat(web5, did, chat, profile);
+    })
+  );
+  return processedChats;
 };
 
 export const fetchChatMember = async (web5: Web5, did: string) => {
   try {
     if (!web5) return null;
 
-    // TODO: change to read
-    const response = await web5.dwn.records.query({
+    const response = await web5.dwn.records.read({
       from: did,
       message: {
         filter: {
           protocol: ProtocolDefinition.protocol,
           protocolPath: "profile",
           schema: ProtocolDefinition.types.profile.schema,
+          author: did,
         },
       },
     });
 
-    if (!response.records || response.records.length === 0) return null;
-    const profileRecord = response.records[0];
-    const profile = await profileRecord.data.json();
+    if (!response.record) return null;
 
-    const avatar = await fetchAvatar(web5, did);
+    const profile = await response.record.data.json();
 
-    return { ...profile, avatar, recordId: profileRecord.id } as Profile;
+    return { ...profile, recordId: response.record.id } as Profile;
   } catch (error) {
     throw new Error("Failed to fetch profile");
   }
@@ -180,27 +159,9 @@ export const getChatMembers = async (web5: Web5, dids: string[]) => {
   const members: ChatMember[] = [];
   for (const did of dids) {
     const member = await fetchChatMember(web5, did);
-
     if (member) members.push(member);
   }
   return members;
-};
-
-export const blobToUrl = (blob: Blob | null) => {
-  if (!blob) return "";
-  const url = URL.createObjectURL(blob);
-  return url;
-};
-
-export const fileToBlob = (file: File) => {
-  const blob = new Blob([file], { type: "image/png" });
-  return blob;
-};
-
-export const getAvatar = (avatar: Avatar | null) => {
-  if (!avatar || !avatar.photo) return "";
-  const url = blobToUrl(avatar.photo);
-  return url;
 };
 
 export const getConversationRecipientDid = (chat: Chat, did: string) => {
@@ -208,3 +169,17 @@ export const getConversationRecipientDid = (chat: Chat, did: string) => {
   const recipientDid = theirDids[0];
   return recipientDid;
 };
+
+export const fileToBase64 = async (file: File) => {
+  const binaryImage = await file.arrayBuffer();
+  const base64 = btoa(
+    new Uint8Array(binaryImage).reduce(
+      (data, byte) => data + String.fromCharCode(byte),
+      ""
+    )
+  );
+  return base64;
+};
+
+export const getAvatarUrl = (base64: string) =>
+  `data:image/png;base64,${base64}`;

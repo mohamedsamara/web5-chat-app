@@ -7,7 +7,7 @@ const initialState: Profile = {
   uid: "",
   did: "",
   name: "",
-  avatar: null,
+  avatar: "",
 };
 
 export const dbProfileAtom = atom<Profile>(initialState);
@@ -18,3 +18,10 @@ export const profileAtom = atom(
     set(dbProfileAtom, { ...get(dbProfileAtom), ...profile });
   }
 );
+
+export const profileCreatedAtom = atom((get) => {
+  const profile = get(profileAtom);
+  return profile.recordId && profile.avatar ? true : false;
+});
+
+export const profileFetchedAtom = atom<boolean>(false);

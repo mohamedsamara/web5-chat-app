@@ -1,5 +1,4 @@
 import { cn } from "lib/utils";
-import { Avatar } from "lib/types";
 import UserAvatar from "components/UserAvatar";
 
 type Props = {
@@ -7,7 +6,7 @@ type Props = {
   end: boolean;
   showAvatar: boolean;
   showName: boolean;
-  avatar: Avatar | null;
+  avatar: string;
   name: string;
   text: string;
   time: string;
@@ -32,31 +31,25 @@ const ChatBubble = ({
     >
       <div className={cn(end ? "order-2" : "order-1")}>
         <div className="w-8 h-8">
-          {showAvatar && <UserAvatar avatar={avatar} alias={name} />}
+          {showAvatar && <UserAvatar src={avatar} alias={name} />}
         </div>
       </div>
       <div
         className={cn(
-          "flex flex-col w-full max-w-[320px] leading-1.5 p-4 border-gray-200 bg-gray-100 dark:bg-gray-700",
+          "flex flex-col w-full max-w-[320px] leading-1.5 p-4 border",
           end
-            ? "order-1 rounded-s-3xl rounded-ee-3xl"
-            : "order-2 rounded-e-3xl rounded-es-3xl",
+            ? "order-1 rounded-s-3xl rounded-ee-3xl bg-muted border-gray-200"
+            : "order-2 rounded-e-3xl rounded-es-3xl bg-blue-700 text-white border-blue-50",
           noStyles ? "rounded-3xl" : ""
         )}
       >
         {showName && (
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <span className="text-sm font-semibold text-gray-900 dark:text-white">
-              {name}
-            </span>
+            <span className="text-sm font-semibold">{name}</span>
           </div>
         )}
-        <p className="text-sm font-normal py-2.5 text-gray-900 dark:text-white">
-          {text}
-        </p>
-        <span className="text-sm font-normal text-gray-500 dark:text-gray-400">
-          {time}
-        </span>
+        <p className="text-sm font-normal py-2.5">{text}</p>
+        <span className="text-sm font-normal">{time}</span>
       </div>
     </div>
   );

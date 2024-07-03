@@ -12,4 +12,7 @@ export const selectedChatAtom = (chatId: string) => {
   return foundChat;
 };
 
-export const msgsAtom = atom<ChatMsg[]>([]);
+export const chatMsgsAtom = atom<ChatMsg[]>([]);
+
+export const chatsFetchedAtom = atom<boolean>(false);
+export const msgsFetchedAtom = atom<boolean>(false);
