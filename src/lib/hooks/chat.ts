@@ -35,7 +35,7 @@ export const useChatMsgs = (chat: Chat) => {
   const chatMsgs = useAtomValue(chatMsgsAtom);
   const processedMsgs = useMemo(() => {
     if (!did) return [];
-    return processMsgs(chatMsgs, chat, did);
+    return processMsgs(chatMsgs, did);
   }, [chat.uid, chatMsgs.length]);
 
   return { msgs: processedMsgs };
@@ -80,7 +80,8 @@ export const useChat = () => {
 
       await record.send(recipientDid);
 
-      const chat = await record.data.json();
+      const data = await record.data.json();
+      const chat = { ...data, recordId: record.id };
 
       const processedChat = await processChat(web5, did, chat, profile);
       setChats([processedChat, ...chats]);
@@ -108,7 +109,7 @@ export const useChat = () => {
 
       setChats(processedChats);
     } catch (error) {
-      throw new Error("Failed to fetch chats");
+      console.log("Failed to fetch chats : error", error);
     } finally {
       setChatsFetched(true);
     }
@@ -148,12 +149,13 @@ export const useChat = () => {
         data: {
           uid: uuidv4(),
           type: CHAT_MSG_TYPES.TEXT,
-          content: payload.content,
+          text: payload.text,
           sender: {
             name: profile.name,
             avatar: profile.avatar,
             did,
           },
+          replyUid: payload.replyUid,
           createdAt: new Date().getTime(),
         },
         message: {
@@ -171,8 +173,7 @@ export const useChat = () => {
       const data = await record.data.json();
       await record.send(recipientDid);
 
-      setChatMsgs((prev) => [...prev, data]);
-      // setChatMsgs([...chatMsgs, data]);
+      setChatMsgs((prev) => [...prev, { ...data, recordId: record.id }]);
     } catch (error) {
       console.log("error sending msg", error);
     }

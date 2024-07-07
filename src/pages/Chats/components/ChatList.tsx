@@ -8,6 +8,7 @@ import CreateConversation from "./CreateConversation";
 
 const ChatList = () => {
   const { chats, fetchChats, chatsFetched } = useChat();
+  // console.log("chats", chats);
 
   useEffect(() => {
     fetchChats();

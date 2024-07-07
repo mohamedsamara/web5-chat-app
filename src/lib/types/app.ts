@@ -10,7 +10,8 @@ export type ProfilePayload = {
 
 export type CreateMsgPayload = {
   chat: Chat;
-  content: string;
+  text: string;
+  replyUid: string;
 };
 
 /* RECORDS */
@@ -46,9 +47,11 @@ export type ChatMsg = {
   recordId: string;
   uid: string;
   sender: Sender;
-  content: string;
+  text: string;
   type: MsgType;
   createdAt: number;
   showInfoBar: boolean;
   isMe: boolean;
+  replyUid: string;
+  reply: ChatMsg | null;
 };

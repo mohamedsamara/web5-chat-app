@@ -81,12 +81,20 @@ const getPreviousMsg = (msgs: ChatMsg[], i: number) => {
   return previous;
 };
 
-export const processMsgs = (msgs: ChatMsg[], chat: Chat, did: string) => {
+const extractReplyMsg = (msgs: ChatMsg[], replyUid: string) => {
+  const reply = msgs.find((m) => m.uid === replyUid);
+  return reply;
+};
+
+export const processMsgs = (msgs: ChatMsg[], did: string) => {
   return msgs
     .sort((a, b) => a.createdAt - b.createdAt)
     .map((msg, i) => {
       msg.showInfoBar = getShowInfoBar(msgs, msg, i);
       msg.isMe = did === msg.sender.did;
+      const reply = extractReplyMsg(msgs, msg.replyUid);
+      msg.reply = reply ?? null;
+
       return msg;
     });
 };

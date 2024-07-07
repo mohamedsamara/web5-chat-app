@@ -36,7 +36,6 @@ export const useProfile = () => {
       if (!response.record) return;
 
       const data = await response.record.data.json();
-
       setProfile({ ...profile, ...data, recordId: response.record.id });
     } catch (error) {
       console.log("error", error);

@@ -20,7 +20,7 @@
       "$actions": [
         {
           "who": "anyone",
-          "can": ["create", "update"]
+          "can": ["create"]
         },
         {
           "who": "author",
@@ -37,7 +37,7 @@
         "$actions": [
           {
             "who": "anyone",
-            "can": ["create", "update"]
+            "can": ["create"]
           },
           {
             "who": "author",

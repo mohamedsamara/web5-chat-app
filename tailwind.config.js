@@ -66,10 +66,15 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "bg-pulse": {
+          from: { filter: "brightness(1)" },
+          to: { filter: "brightness(0.9)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "bg-pulse": "0.5s ease-in-out 2 alternate bg-pulse",
       },
     },
   },

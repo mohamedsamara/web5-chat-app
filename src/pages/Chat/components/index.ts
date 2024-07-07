@@ -1,6 +1,7 @@
 import ChatHeader from "./ChatHeader";
 import ChatFooter from "./ChatFooter";
-import MsgList from "./MsgList";
+import Msgs from "./Msgs";
 import EmptyChat from "./EmptyChat";
+import ReplyContent from "./ReplyContent";
 
-export { ChatHeader, ChatFooter, MsgList, EmptyChat };
+export { ChatHeader, ChatFooter, Msgs, EmptyChat, ReplyContent };
