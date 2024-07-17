@@ -6,8 +6,8 @@ import SpinnerOverlay from "components/SpinnerOverlay";
 import MsgList from "./MsgList";
 
 const Msgs = ({ chat }: { chat: Chat }) => {
-  const { fetchChatMsgs, msgsFetched } = useChat();
-  const { msgs } = useChatMsgs(chat);
+  const { msgsFetched, fetchChatMsgs } = useChat();
+  const { msgs } = useChatMsgs(chat.uid);
   // console.log("msgs", msgs);
 
   useEffect(() => {
@@ -15,13 +15,13 @@ const Msgs = ({ chat }: { chat: Chat }) => {
     fetchChatMsgs(chat.recordId);
   }, [chat.uid]);
 
-  useEffect(() => {
-    const intervalId = setInterval(async () => {
-      fetchChatMsgs(chat.recordId);
-    }, 5000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(async () => {
+  //     fetchChatMsgs(chat.recordId);
+  //   }, 5000);
 
-    return () => clearInterval(intervalId);
-  }, [chat.uid]);
+  //   return () => clearInterval(intervalId);
+  // }, [chat.uid]);
 
   if (!msgsFetched) return <SpinnerOverlay />;
 

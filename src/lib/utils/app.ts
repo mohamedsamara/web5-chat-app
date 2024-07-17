@@ -1,6 +1,13 @@
 import { RecordsQueryResponse, Web5 } from "@web5/api";
-import { Chat, ChatMember, ChatMsg, Profile } from "lib/types";
+import {
+  Chat,
+  ChatMember,
+  ChatMsg,
+  MsgAttachmentType,
+  Profile,
+} from "lib/types";
 import { ProtocolDefinition } from "lib/protocols";
+import { CHAT_MSG_ATTACHMENT_TYPES } from "../constants";
 
 export const handleError = (error: unknown) => {
   let message = "Unknown Error";
@@ -12,7 +19,7 @@ export const handleError = (error: unknown) => {
 export const updateRecord = async (
   web5: Web5,
   recordId: string,
-  data: unknown,
+  data: Record<string, unknown>,
   published: boolean = false
 ) => {
   try {
@@ -24,8 +31,15 @@ export const updateRecord = async (
       },
     });
 
+    const existingData = await record.data.json();
+
+    const updatedData = {
+      ...existingData,
+      ...data,
+    };
+
     await record.update({
-      data: data,
+      data: updatedData,
       published,
     });
 
@@ -35,18 +49,26 @@ export const updateRecord = async (
   }
 };
 
-export const getRecords = async (response: RecordsQueryResponse) => {
+type RecordType = "json" | "blob";
+
+export const getRecords = async (
+  response: RecordsQueryResponse,
+  type: RecordType = "json"
+) => {
   try {
     if (!response.records || response.records.length === 0) return [];
 
-    const data = await Promise.all(
+    return await Promise.all(
       response.records.map(async (record) => {
-        const data = await record.data.json();
-        return { ...data, recordId: record.id };
+        if (type === "json") {
+          const data = await record.data.json();
+          return { ...data, recordId: record.id };
+        }
+
+        const data = await record.data.blob();
+        return { data, recordId: record.id };
       })
     );
-
-    return data;
   } catch (error) {
     return [];
   }
@@ -86,7 +108,7 @@ const extractReplyMsg = (msgs: ChatMsg[], replyUid: string) => {
   return reply;
 };
 
-export const processMsgs = (msgs: ChatMsg[], did: string) => {
+export const processMsgs = (msgs: ChatMsg[], chatUid: string, did: string) => {
   return msgs
     .sort((a, b) => a.createdAt - b.createdAt)
     .map((msg, i) => {
@@ -94,7 +116,7 @@ export const processMsgs = (msgs: ChatMsg[], did: string) => {
       msg.isMe = did === msg.sender.did;
       const reply = extractReplyMsg(msgs, msg.replyUid);
       msg.reply = reply ?? null;
-
+      msg.chatUid = chatUid;
       return msg;
     });
 };
@@ -178,16 +200,10 @@ export const getConversationRecipientDid = (chat: Chat, did: string) => {
   return recipientDid;
 };
 
-export const fileToBase64 = async (file: File) => {
-  const binaryImage = await file.arrayBuffer();
-  const base64 = btoa(
-    new Uint8Array(binaryImage).reduce(
-      (data, byte) => data + String.fromCharCode(byte),
-      ""
-    )
-  );
-  return base64;
-};
+export const isAttachmentTypeAllowed = (type: string) =>
+  ProtocolDefinition.types.attachment.dataFormats.includes(type);
 
-export const getAvatarUrl = (base64: string) =>
-  `data:image/png;base64,${base64}`;
+export const getTypeOfAttachment = (fileType: string) => {
+  const type = fileType.substring(0, fileType.indexOf("/"));
+  return CHAT_MSG_ATTACHMENT_TYPES[type.toUpperCase() as MsgAttachmentType];
+};

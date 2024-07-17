@@ -1,8 +1,21 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect, useState, useCallback, useMemo, useRef } from "react";
+import {
+  useEffect,
+  useState,
+  useCallback,
+  useMemo,
+  useRef,
+  RefObject,
+  ChangeEvent,
+} from "react";
 import { useAtom } from "jotai";
 
-import { replyScrollAtom } from "lib/stores";
+import {
+  replyScrollAtom,
+  isMsgSwipingAtom,
+  attachmentViewerAtom,
+} from "lib/stores";
+import { AttachmentViewerParams, AttachmentDisplayStatus } from "lib/types";
 
 type CopyStatus = "inactive" | "copied" | "failed";
 export const useCopyToClipboard = (
@@ -107,4 +120,150 @@ export const useReplyScrollSpy = () => {
   const onReplyClick = useDebounce((uid) => scrollToMsg(uid));
 
   return { reply, scrollToMsg: onReplyClick };
+};
+
+export const useIsMsgSwiping = () => {
+  const [isMsgSwiping, setIsMsgSwiping] = useAtom(isMsgSwipingAtom);
+  return { isMsgSwiping, setIsMsgSwiping };
+};
+
+export const useAttachmentViewer = () => {
+  const [attachmentViewer, setAttachmentViewer] = useAtom(attachmentViewerAtom);
+
+  const openViewer = (params: AttachmentViewerParams) =>
+    setAttachmentViewer({ visible: true, params });
+  const closeViewer = () =>
+    setAttachmentViewer({ visible: false, params: null });
+
+  return { attachmentViewer, openViewer, closeViewer };
+};
+
+type Handler = (event: MouseEvent) => void;
+export const useClickOutside = <T extends HTMLElement = HTMLElement>(
+  ref: RefObject<T>,
+  handler: Handler
+) => {
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) {
+        handler(event);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref, handler]);
+};
+
+type ElementRef = RefObject<HTMLVideoElement>;
+type SelectEvent = ChangeEvent<HTMLSelectElement>;
+
+type PlayerState = {
+  isPlaying: boolean;
+  progress: number;
+  speed: number;
+  isMuted: boolean;
+};
+
+type PlayerProps = {
+  playerState: PlayerState;
+  togglePlay: () => void;
+  handleOnTimeUpdate: () => void;
+  handleVideoProgress: (value: number) => void;
+  handleVideoSpeed: (e: SelectEvent) => void;
+  toggleMute: () => void;
+};
+
+export const usePlayer = (
+  videoElement: ElementRef,
+  autoPlay: boolean,
+  status: AttachmentDisplayStatus
+): PlayerProps => {
+  const [playerState, setPlayerState] = useState<PlayerState>({
+    isPlaying: false,
+    progress: 0,
+    speed: 1,
+    isMuted: false,
+  });
+
+  useEffect(() => {
+    if (status === "LOADED" && autoPlay) {
+      togglePlay();
+    }
+  }, [videoElement, autoPlay, status]);
+
+  useEffect(() => {
+    playerState.isPlaying
+      ? videoElement.current!.play()
+      : videoElement.current!.pause();
+  }, [playerState.isPlaying, videoElement]);
+
+  const togglePlay = () => {
+    setPlayerState({
+      ...playerState,
+      isPlaying: !playerState.isPlaying,
+    });
+  };
+
+  useEffect(() => {
+    if (playerState.progress === 100) {
+      setPlayerState({
+        ...playerState,
+        isPlaying: false,
+        progress: 0,
+      });
+    }
+  }, [playerState.progress]);
+
+  const handleOnTimeUpdate = () => {
+    const progress =
+      (videoElement.current!.currentTime / videoElement.current!.duration) *
+      100;
+    setPlayerState({
+      ...playerState,
+      progress,
+    });
+  };
+
+  const handleVideoProgress = (value: number) => {
+    const manualChange = Number(value);
+    videoElement.current!.currentTime =
+      (videoElement.current!.duration / 100) * manualChange;
+    setPlayerState({
+      ...playerState,
+      progress: manualChange,
+    });
+  };
+
+  const handleVideoSpeed = (e: SelectEvent) => {
+    const speed = Number(e.target.value);
+    videoElement.current!.playbackRate = speed;
+    setPlayerState({
+      ...playerState,
+      speed,
+    });
+  };
+
+  useEffect(() => {
+    playerState.isMuted
+      ? (videoElement.current!.muted = true)
+      : (videoElement.current!.muted = false);
+  }, [playerState.isMuted, videoElement]);
+
+  const toggleMute = () => {
+    setPlayerState({
+      ...playerState,
+      isMuted: !playerState.isMuted,
+    });
+  };
+
+  return {
+    playerState,
+    togglePlay,
+    handleOnTimeUpdate,
+    handleVideoProgress,
+    handleVideoSpeed,
+    toggleMute,
+  };
 };

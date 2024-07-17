@@ -13,6 +13,16 @@
     "profile": {
       "schema": "https://schema.org/schemas/profile",
       "dataFormats": ["application/json"]
+    },
+    "attachment": {
+      "schema": "https://schema.org/schemas/attachment",
+      "dataFormats": [
+        "image/gif",
+        "image/png",
+        "image/jpeg",
+        "image/webp",
+        "video/mp4"
+      ]
     }
   },
   "structure": {
@@ -20,7 +30,7 @@
       "$actions": [
         {
           "who": "anyone",
-          "can": ["create"]
+          "can": ["create", "update"]
         },
         {
           "who": "author",
@@ -37,7 +47,7 @@
         "$actions": [
           {
             "who": "anyone",
-            "can": ["create"]
+            "can": ["create", "update"]
           },
           {
             "who": "author",
@@ -47,6 +57,24 @@
           {
             "who": "recipient",
             "of": "chat/message",
+            "can": ["read"]
+          }
+        ]
+      },
+      "attachment": {
+        "$actions": [
+          {
+            "who": "anyone",
+            "can": ["create", "update"]
+          },
+          {
+            "who": "author",
+            "of": "chat/attachment",
+            "can": ["read"]
+          },
+          {
+            "who": "recipient",
+            "of": "chat/attachment",
             "can": ["read"]
           }
         ]

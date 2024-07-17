@@ -1,11 +1,21 @@
 export enum CHAT_MSG_TYPES {
   TEXT = "TEXT",
+  ATTACHMENT = "ATTACHMENT",
+}
+
+export enum CHAT_MSG_ATTACHMENT_TYPES {
   VIDEO = "VIDEO",
-  PHOTO = "PHOTO",
+  IMAGE = "IMAGE",
 }
 
 export enum CHAT_TYPES {
   CONVERSATION = "CONVERSATION",
   GROUP = "GROUP",
   DUMMY = "DUMMY",
+}
+
+export enum ATTACHMENT_DISPLAY_STATUS {
+  LOADING,
+  LOADED,
+  FAILED,
 }

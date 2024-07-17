@@ -1,14 +1,14 @@
 import { useRef, ChangeEvent, useState } from "react";
-import { Loader2 } from "lucide-react";
 
 import { fileToBase64 } from "lib/utils";
 import { useProfile } from "lib/hooks";
 import UserAvatar from "components/UserAvatar";
 import { Button } from "components/ui/button";
+import Loader from "components/Loader";
 
 const UploadAvatar = ({ onDone }: { onDone?: () => void }) => {
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const { profile, uploadAvatar } = useProfile();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const hiddenFileInput = useRef<HTMLInputElement | null>(null);
 
   const onClick = () => {
@@ -39,7 +39,7 @@ const UploadAvatar = ({ onDone }: { onDone?: () => void }) => {
           <UserAvatar src={profile.avatar} alias={profile.name} />
         </div>
         <Button onClick={onClick} disabled={isSubmitting}>
-          {isSubmitting && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+          {isSubmitting && <Loader className="mr-1" />}
           Upload photo
         </Button>
         <input

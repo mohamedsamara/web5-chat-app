@@ -4,7 +4,8 @@ import { useSwipeable } from "react-swipeable";
 
 import EE, { REPLY_MSG } from "lib/ee";
 import { ChatMsg } from "lib/types";
-import ChatBubble from "components/ChatBubble";
+import { useIsMsgSwiping } from "lib/hooks";
+import ChatBubble from "./ChatBubble";
 import MsgContent from "./MsgContent";
 import ReplyContent from "./ReplyContent";
 
@@ -15,14 +16,14 @@ type Props = {
 };
 
 const Msg = ({ msg, isHighlighted, onReplyClick }: Props) => {
+  const { isMsgSwiping, setIsMsgSwiping } = useIsMsgSwiping();
   const msgTime = format(msg.createdAt, "p");
-  const [swiping, setSwiping] = useState(false);
   const [deltaX, setDeltaX] = useState(0);
   /* This is a workaround swipe functionality */
   const handlers = useSwipeable({
     trackMouse: true,
     onSwiping: (eventData) => {
-      setSwiping(true);
+      setIsMsgSwiping(true);
       if (msg.isMe) {
         if (eventData.deltaX > -80 && eventData.deltaX < 0) {
           setDeltaX(eventData.deltaX);
@@ -34,7 +35,7 @@ const Msg = ({ msg, isHighlighted, onReplyClick }: Props) => {
       }
     },
     onSwiped: () => {
-      setTimeout(() => setSwiping(false), 500);
+      setTimeout(() => setIsMsgSwiping(false), 500);
       setDeltaX(0);
       if (deltaX !== 0) {
         EE.emit(REPLY_MSG, msg);
@@ -43,7 +44,7 @@ const Msg = ({ msg, isHighlighted, onReplyClick }: Props) => {
   });
 
   const _onReplyClick = (uid: string) => {
-    if (swiping) return;
+    if (isMsgSwiping) return;
     onReplyClick(uid);
   };
 
@@ -68,12 +69,13 @@ const Msg = ({ msg, isHighlighted, onReplyClick }: Props) => {
       >
         {msg.reply && (
           <ReplyContent
-            className="bg-slate-50 text-black rounded-tr-md rounded-br-md"
+            className="px-4 pt-4"
+            contentStyles="bg-slate-50 text-black rounded-tr-md rounded-br-md"
             msg={msg.reply}
             onClick={_onReplyClick}
+            isReply
           />
         )}
-
         <MsgContent msg={msg} />
       </ChatBubble>
     </div>

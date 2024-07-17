@@ -1,35 +1,83 @@
 import { cn, getMemoizedRandomColors } from "lib/utils";
 import { ChatMsg } from "lib/types";
-import { Button } from "components/ui/button";
+import { useReplyMsg } from "lib/hooks";
 import MsgText from "./MsgText";
+import AttachementContent from "./AttachementContent";
 
 type Props = {
   className?: string;
+  contentStyles?: string;
+  isReply?: boolean;
+  isPreview?: boolean;
   msg: ChatMsg;
   onClick: (uid: string) => void;
 };
 
-const ReplyContent = ({ className, msg, onClick }: Props) => {
+const ReplyContent = ({
+  className,
+  contentStyles,
+  isReply = false,
+  msg,
+  onClick,
+}: Props) => {
   const color = getMemoizedRandomColors(msg.sender.name);
   const name = msg.isMe ? "You" : msg.sender.name;
 
   return (
-    <Button
-      variant="none"
-      className="flex w-full h-auto flex justify-start text-left p-0"
+    <div
+      className={cn("flex justify-start text-left cursor-pointer", className)}
       onClick={() => onClick(msg.uid)}
     >
       <div
-        className={cn("grid gap-1 w-full px-2 border-l-4 pt-1 pb-2", className)}
+        className={cn(
+          "flex flex-col gap-1 w-full px-2 border-l-4 pt-1 pb-2",
+          contentStyles
+        )}
         style={{ borderLeftColor: color }}
       >
         <span className="text-sm" style={{ color }}>
           {name}
         </span>
-        <MsgText className="truncate" text={msg.text} />
+        <ReplyContentType msg={msg} isReply={isReply} />
       </div>
-    </Button>
+    </div>
   );
 };
 
 export default ReplyContent;
+
+const ReplyContentType = ({
+  isReply,
+  msg,
+}: {
+  msg: ChatMsg;
+  isReply: boolean;
+}) => {
+  const reply = useReplyMsg(msg, isReply);
+
+  switch (msg.type) {
+    case "TEXT":
+      return <MsgText className="truncate" text={msg.text} />;
+    case "ATTACHMENT":
+      if (!msg.attachment) return <></>;
+      return (
+        <div className="flex items-center justify-between gap-2">
+          <AttachementContent
+            isPreview
+            attachment={msg.attachment}
+            className={cn(
+              "rounded-md overflow-hidden aspect-square",
+              isReply && !reply.text ? "w-full" : "w-16"
+            )}
+          />
+          <div className="flex-1 min-w-0">
+            {reply.text && (
+              <MsgText className="truncate capitalize" text={msg.text} />
+            )}
+          </div>
+        </div>
+      );
+    default:
+      return <></>;
+  }
+};

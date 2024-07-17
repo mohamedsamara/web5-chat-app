@@ -22,7 +22,7 @@ const Chats = () => {
           <MemoizedChatList />
         </div>
       </aside>
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <div
           className={cn(
             "flex-1 h-full w-full fixed top-0 bottom-0 bg-white lg:static transition-all duration-500 ease-in-out",

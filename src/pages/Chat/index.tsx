@@ -6,12 +6,12 @@ import SpinnerOverlay from "components/SpinnerOverlay";
 import { EmptyChat } from "./components";
 
 const Chat = () => {
-  const { chatId } = useParams();
+  const { chatUid } = useParams();
   const { chatsFetched } = useChat();
-  const { chat } = useSelectedChat(chatId ?? "");
+  const { chat } = useSelectedChat(chatUid ?? "");
 
   if (!chatsFetched) return <SpinnerOverlay />;
-  if (!chat || !chatId) return <EmptyChat />;
+  if (!chat || !chatUid) return <EmptyChat />;
 
   return (
     <div className="relative flex flex-col h-full overflow-hidden">

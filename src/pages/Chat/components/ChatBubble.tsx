@@ -3,7 +3,7 @@ import { PropsWithChildren } from "react";
 import { cn } from "lib/utils";
 import UserAvatar from "components/UserAvatar";
 import ForwardIcon from "assets/forward.svg";
-import Fade from "../Animations";
+import Fade from "components/Animations";
 
 type Props = PropsWithChildren & {
   className?: string;
@@ -71,7 +71,7 @@ const ChatBubble = ({
         )}
         <div
           className={cn(
-            "p-4 border",
+            "border overflow-hidden",
             end
               ? "rounded-s-3xl rounded-ee-3xl bg-muted border-gray-200"
               : "rounded-e-3xl rounded-es-3xl bg-white text-black border-blue-50",

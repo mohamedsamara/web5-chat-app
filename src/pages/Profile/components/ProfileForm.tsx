@@ -1,11 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Loader2 } from "lucide-react";
 
 import { REQUIRED_FIELD } from "lib/validations";
 
 import { useProfile } from "lib/hooks";
+import Loader from "components/Loader";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import {
@@ -66,7 +66,7 @@ const ProfileForm = ({ onDone }: { onDone?: () => void }) => {
             )}
           />
           <Button type="submit" disabled={!isValid || !isDirty || isSubmitting}>
-            {isSubmitting && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+            {isSubmitting && <Loader className="mr-1" />}
             {profileCreated ? "Save" : "Create"}
           </Button>
         </form>

@@ -1,7 +1,13 @@
-import { CHAT_TYPES, CHAT_MSG_TYPES } from "../constants";
+import {
+  CHAT_TYPES,
+  CHAT_MSG_TYPES,
+  CHAT_MSG_ATTACHMENT_TYPES,
+  ATTACHMENT_DISPLAY_STATUS,
+} from "lib/constants";
 
 export type ChatType = keyof typeof CHAT_TYPES;
 export type MsgType = keyof typeof CHAT_MSG_TYPES;
+export type MsgAttachmentType = keyof typeof CHAT_MSG_ATTACHMENT_TYPES;
 
 /* FORMS */
 export type ProfilePayload = {
@@ -12,6 +18,11 @@ export type CreateMsgPayload = {
   chat: Chat;
   text: string;
   replyUid: string;
+};
+
+export type CreateAttachmentMsgPayload = CreateMsgPayload & {
+  blob: Blob;
+  attachmentType: MsgAttachmentType;
 };
 
 /* RECORDS */
@@ -54,4 +65,31 @@ export type ChatMsg = {
   isMe: boolean;
   replyUid: string;
   reply: ChatMsg | null;
+  attachment: Attachment | null;
+  chatUid: string;
 };
+
+export type Attachment = {
+  recordId: string;
+  type: MsgAttachmentType;
+  url?: string;
+  blob: Blob;
+};
+
+/* UI */
+export type ReplyScroll = {
+  visible: boolean;
+  uid: string;
+};
+
+export type AttachmentViewerParams = {
+  caption: string;
+  attachment: Attachment;
+};
+
+export type AttachmentViewer = {
+  visible: boolean;
+  params: AttachmentViewerParams | null;
+};
+
+export type AttachmentDisplayStatus = keyof typeof ATTACHMENT_DISPLAY_STATUS;

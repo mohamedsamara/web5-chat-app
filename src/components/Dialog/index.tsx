@@ -41,7 +41,7 @@ const Dialog = ({
                 className="rounded-full h-8 w-8"
                 onClick={onClose}
               >
-                <span className="sr-only">Close profile modal</span>
+                <span className="sr-only">Close dialog</span>
                 <X className="h-4 w-4" />
               </Button>
             </DialogClose>

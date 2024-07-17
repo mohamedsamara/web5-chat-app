@@ -15,7 +15,7 @@ const ReplyFooter = ({ msg, onClose }: Props) => {
 
   return (
     <div className="flex items-center justify-between gap-2 pr-2 border-t border-t-gray-200">
-      <div className="flex-1">
+      <div className="flex-1 min-w-0">
         <ReplyContent msg={msg} onClick={scrollToMsg} />
       </div>
       <Button

@@ -2,10 +2,11 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { PencilIcon, Loader2 } from "lucide-react";
+import { PencilIcon } from "lucide-react";
 
 import { useChat } from "lib/hooks";
 import { REQUIRED_FIELD } from "lib/validations";
+import Loader from "components/Loader";
 import { Button } from "components/ui/button";
 import { Input } from "components/ui/input";
 import Dialog from "components/Dialog";
@@ -86,7 +87,7 @@ const CreateConversation = ({ btnType = "icon" }: { btnType?: ButtonType }) => {
             )}
           />
           <Button type="submit" disabled={!isValid || !isDirty || isSubmitting}>
-            {isSubmitting && <Loader2 className="h-4 w-4 mr-1 animate-spin" />}
+            {isSubmitting && <Loader className="mr-1" />}
             Create
           </Button>
         </form>

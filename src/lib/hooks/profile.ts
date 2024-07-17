@@ -48,15 +48,7 @@ export const useProfile = () => {
     try {
       if (!web5) return;
 
-      await updateRecord(
-        web5,
-        profile.recordId,
-        {
-          ...profile,
-          ...payload,
-        },
-        true
-      );
+      await updateRecord(web5, profile.recordId, payload, true);
 
       await fetchProfile();
     } catch (error) {
@@ -98,7 +90,6 @@ export const useProfile = () => {
         web5,
         profile.recordId,
         {
-          ...profile,
           avatar: base64,
         },
         true

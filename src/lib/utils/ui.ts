@@ -62,7 +62,6 @@ export const getRandomColors = () => {
 };
 
 const cache: { [key in string]: string } = {};
-
 export const getMemoizedRandomColors = (s: string) => {
   const color = getRandomColors();
 
@@ -74,3 +73,25 @@ export const getMemoizedRandomColors = (s: string) => {
     return result;
   }
 };
+
+export const fileToBase64 = async (file: File) => {
+  const binaryImage = await file.arrayBuffer();
+  const base64 = btoa(
+    new Uint8Array(binaryImage).reduce(
+      (data, byte) => data + String.fromCharCode(byte),
+      ""
+    )
+  );
+  return base64;
+};
+
+export const blobToBase64 = (blob: Blob) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    reader.readAsDataURL(blob);
+  });
+};
+
+export const getAvatarUrl = (base64: string) =>
+  `data:image/png;base64,${base64}`;
