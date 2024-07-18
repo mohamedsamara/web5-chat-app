@@ -1,6 +1,6 @@
 import { cn, getMemoizedRandomColors } from "lib/utils";
 import { ChatMsg } from "lib/types";
-import { useReplyMsg } from "lib/hooks";
+import { useMsgText } from "lib/hooks";
 import MsgText from "./MsgText";
 import AttachementContent from "./AttachementContent";
 
@@ -53,7 +53,7 @@ const ReplyContentType = ({
   msg: ChatMsg;
   isReply: boolean;
 }) => {
-  const reply = useReplyMsg(msg, isReply);
+  const msgText = useMsgText(msg, isReply);
 
   switch (msg.type) {
     case "TEXT":
@@ -67,11 +67,11 @@ const ReplyContentType = ({
             attachment={msg.attachment}
             className={cn(
               "rounded-md overflow-hidden aspect-square",
-              isReply && !reply.text ? "w-full" : "w-16"
+              isReply && !msgText ? "w-full" : "w-16"
             )}
           />
           <div className="flex-1 min-w-0">
-            {reply.text && (
+            {msgText && (
               <MsgText className="truncate capitalize" text={msg.text} />
             )}
           </div>

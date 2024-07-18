@@ -16,7 +16,7 @@ const Chat = () => {
   return (
     <div className="relative flex flex-col h-full overflow-hidden">
       <ChatHeader chat={chat} />
-      <div className="flex flex-col-reverse flex-1 pb-6 pt-40 overflow-x-hidden overflow-y-auto no-scrollbar">
+      <div className="flex flex-col-reverse flex-1 pb-6 pt-20 overflow-x-hidden overflow-y-auto no-scrollbar">
         <Msgs chat={chat} />
       </div>
       <ChatFooter chat={chat} />

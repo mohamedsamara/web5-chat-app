@@ -25,6 +25,12 @@ export type CreateAttachmentMsgPayload = CreateMsgPayload & {
   attachmentType: MsgAttachmentType;
 };
 
+export type CreateOrUpdateLastMsgPayload = {
+  chatRecordId: string;
+  msgRecordId: string;
+  recipientDid: string;
+};
+
 /* RECORDS */
 export type Profile = {
   recordId: string;
@@ -36,6 +42,10 @@ export type Profile = {
 
 export type ChatMember = Profile;
 export type Sender = Profile;
+export type LastMsg = {
+  recordId: string;
+  msg: ChatMsg;
+};
 
 export type Chat = {
   recordId: string;
@@ -46,7 +56,7 @@ export type Chat = {
   memberDids: string[];
   members: ChatMember[];
   ownerDid: string;
-  // lastMsg: LastMsg;
+  lastMsg: LastMsg | null;
   // unseenMsgsCount: UnseenMsgsCount[];
   // unseenMsgsBadgeCount: number;
   deleted: boolean;

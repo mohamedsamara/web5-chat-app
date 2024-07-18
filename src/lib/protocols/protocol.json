@@ -10,6 +10,10 @@
       "schema": "https://schema.org/schemas/message",
       "dataFormats": ["application/json"]
     },
+    "lastMsg": {
+      "schema": "https://schema.org/schemas/lastMsg",
+      "dataFormats": ["application/json"]
+    },
     "profile": {
       "schema": "https://schema.org/schemas/profile",
       "dataFormats": ["application/json"]
@@ -58,6 +62,24 @@
             "who": "recipient",
             "of": "chat/message",
             "can": ["read"]
+          }
+        ]
+      },
+      "lastMsg": {
+        "$actions": [
+          {
+            "who": "anyone",
+            "can": ["create", "update"]
+          },
+          {
+            "who": "author",
+            "of": "chat/lastMsg",
+            "can": ["read"]
+          },
+          {
+            "who": "recipient",
+            "of": "chat/lastMsg",
+            "can": ["read", "co-update"]
           }
         ]
       },

@@ -3,6 +3,7 @@ import {
   Chat,
   ChatMember,
   ChatMsg,
+  LastMsg,
   MsgAttachmentType,
   Profile,
 } from "lib/types";
@@ -121,6 +122,54 @@ export const processMsgs = (msgs: ChatMsg[], chatUid: string, did: string) => {
     });
 };
 
+export const fetchChatLastMsg = async (web5: Web5, chatRecordId: string) => {
+  try {
+    if (!web5) return null;
+
+    /* fetch last msg record */
+    const response = await web5.dwn.records.read({
+      message: {
+        filter: {
+          protocol: ProtocolDefinition.protocol,
+          protocolPath: "chat/lastMsg",
+          parentId: chatRecordId,
+        },
+      },
+    });
+
+    if (!response.record) return null;
+
+    const lastMsgRecord = await response.record.data.json();
+
+    /* fetch msg record */
+    const msgResponse = await web5.dwn.records.read({
+      message: {
+        filter: {
+          protocol: ProtocolDefinition.protocol,
+          protocolPath: "chat/message",
+          recordId: lastMsgRecord.msgRecordId,
+        },
+      },
+    });
+
+    if (!msgResponse.record) return null;
+
+    const msg = (await msgResponse.record.data.json()) as ChatMsg;
+
+    const lastMsg: LastMsg = {
+      recordId: response.record.id,
+      msg: {
+        ...msg,
+        recordId: msgResponse.record.id,
+      },
+    };
+
+    return lastMsg;
+  } catch (error) {
+    throw new Error("Failed to fetch last msg");
+  }
+};
+
 export const processChat = async (
   web5: Web5,
   did: string,
@@ -131,6 +180,7 @@ export const processChat = async (
   if (chat.type === "CONVERSATION") {
     const recipientDid = getConversationRecipientDid(chat, did);
     const contact = await fetchChatMember(web5, recipientDid);
+    const lastMsg = await fetchChatLastMsg(web5, chat.recordId);
 
     if (contact) {
       return {
@@ -138,8 +188,11 @@ export const processChat = async (
         name: contact.name,
         avatar: contact.avatar,
         members: [profile, contact],
+        lastMsg,
       };
     }
+
+    // TODO: include lastMsg when implementing groups
     return chat;
   }
   return chat;

@@ -8,20 +8,19 @@ import MsgList from "./MsgList";
 const Msgs = ({ chat }: { chat: Chat }) => {
   const { msgsFetched, fetchChatMsgs } = useChat();
   const { msgs } = useChatMsgs(chat.uid);
-  // console.log("msgs", msgs);
 
   useEffect(() => {
     if (!chat) return;
-    fetchChatMsgs(chat.recordId);
+    fetchChatMsgs(chat);
   }, [chat.uid]);
 
-  // useEffect(() => {
-  //   const intervalId = setInterval(async () => {
-  //     fetchChatMsgs(chat.recordId);
-  //   }, 5000);
+  useEffect(() => {
+    const intervalId = setInterval(async () => {
+      fetchChatMsgs(chat);
+    }, 5000);
 
-  //   return () => clearInterval(intervalId);
-  // }, [chat.uid]);
+    return () => clearInterval(intervalId);
+  }, [chat.uid]);
 
   if (!msgsFetched) return <SpinnerOverlay />;
 
