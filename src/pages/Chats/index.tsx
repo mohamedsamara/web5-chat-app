@@ -16,7 +16,7 @@ const Chats = () => {
 
   return (
     <main className="flex flex-col lg:flex-row overflow-hidden h-full">
-      <aside className="min-w-[310px] border-r border-r-gray-100">
+      <aside className="min-w-[310px] lg:max-w-[330px] border-r border-r-gray-100">
         <MemoizedChatsHeader />
         <div className="overflow-y-auto no-scrollbar h-[calc(100vh_-3.5rem)]">
           <MemoizedChatList />

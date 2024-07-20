@@ -6,6 +6,7 @@ export enum CHAT_MSG_TYPES {
 export enum CHAT_MSG_ATTACHMENT_TYPES {
   VIDEO = "VIDEO",
   IMAGE = "IMAGE",
+  FILE = "FILE",
 }
 
 export enum CHAT_TYPES {

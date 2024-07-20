@@ -25,7 +25,9 @@
         "image/png",
         "image/jpeg",
         "image/webp",
-        "video/mp4"
+        "video/mp4",
+        "application/json",
+        "text/plain"
       ]
     }
   },

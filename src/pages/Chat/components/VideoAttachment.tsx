@@ -17,7 +17,12 @@ type Props = {
   attachment: Attachment;
 };
 
-const MsgVideo = ({ className, attachment, isPreview, autoPlay }: Props) => {
+const VideoAttachment = ({
+  className,
+  attachment,
+  isPreview,
+  autoPlay,
+}: Props) => {
   const { ref, inView } = useInView({
     threshold: 0,
     rootMargin: "200px",
@@ -70,22 +75,23 @@ const MsgVideo = ({ className, attachment, isPreview, autoPlay }: Props) => {
             <source src={url} />
           </video>
           {!isPreview && (
-            <div className="fade-out group-hover:fade-in absolute bottom-0 right-0 left-0">
-              <div className="flex gap-2 justify-between items-center p-1">
+            <div className="fade-out group-hover:fade-in absolute bottom-0 right-0 left-0 bg-black/40">
+              <div className="flex gap-2 justify-between items-center p-2">
                 <Button
-                  variant="secondary"
+                  variant="none"
                   size="icon"
                   className="rounded-full aspect-1 p-0 w-8 h-8"
                   onClick={togglePlay}
                 >
                   {!playerState.isPlaying ? (
-                    <Play className="w-4 h-4" />
+                    <Play className="w-6 h-6 text-white" />
                   ) : (
-                    <Pause className="w-4 h-4" />
+                    <Pause className="w-6 h-6 text-white" />
                   )}
                 </Button>
                 <div className="flex-1">
                   <Slider
+                    className="cursor-pointer"
                     min={0}
                     max={100}
                     step={1}
@@ -94,15 +100,15 @@ const MsgVideo = ({ className, attachment, isPreview, autoPlay }: Props) => {
                   />
                 </div>
                 <Button
-                  variant="secondary"
+                  variant="none"
                   size="icon"
                   className="rounded-full aspect-1 p-0 w-8 h-8"
                   onClick={toggleMute}
                 >
                   {!playerState.isMuted ? (
-                    <Volume2 className="w-4 h-4" />
+                    <Volume2 className="w-6 h-6 text-white" />
                   ) : (
-                    <VolumeX className="w-4 h-4" />
+                    <VolumeX className="w-6 h-6 text-white" />
                   )}
                 </Button>
               </div>
@@ -119,4 +125,4 @@ const MsgVideo = ({ className, attachment, isPreview, autoPlay }: Props) => {
   );
 };
 
-export default MsgVideo;
+export default VideoAttachment;

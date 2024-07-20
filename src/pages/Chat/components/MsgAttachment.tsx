@@ -1,8 +1,9 @@
-import { useAttachmentViewer, useIsMsgSwiping } from "lib/hooks";
+import { useIsPreviewAttachment } from "lib/hooks";
 import { Attachment, ChatMsg } from "lib/types";
 import MsgText from "./MsgText";
 import EmptyAttachment from "./EmptyAttachment";
 import AttachementContent from "./AttachementContent";
+import MsgAttachmentAnchor from "./MsgAttachmentAnchor";
 
 type ExtraProps = {
   className?: string;
@@ -41,18 +42,17 @@ const MsgAttachmentDisplay = ({
   caption,
   attachment,
 }: MsgAttachmentDisplayProps) => {
-  const { isMsgSwiping } = useIsMsgSwiping();
-  const { openViewer } = useAttachmentViewer();
+  const { isPreview } = useIsPreviewAttachment(attachment.type);
 
   return (
-    <div
-      className="cursor-pointer"
-      onClick={() => {
-        if (isMsgSwiping) return;
-        openViewer({ caption, attachment });
-      }}
-    >
-      <AttachementContent attachment={attachment} isPreview={true} />
+    <div>
+      <MsgAttachmentAnchor attachment={attachment} caption={caption}>
+        <AttachementContent
+          caption={caption}
+          attachment={attachment}
+          isPreview={isPreview}
+        />
+      </MsgAttachmentAnchor>
       {caption && <MsgText className="p-3" text={caption} />}
     </div>
   );

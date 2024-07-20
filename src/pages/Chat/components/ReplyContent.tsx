@@ -64,9 +64,10 @@ const ReplyContentType = ({
         <div className="flex items-center justify-between gap-2">
           <AttachementContent
             isPreview
+            caption={msgText}
             attachment={msg.attachment}
             className={cn(
-              "rounded-md overflow-hidden aspect-square",
+              "rounded-md aspect-square",
               isReply && !msgText ? "w-full" : "w-16"
             )}
           />

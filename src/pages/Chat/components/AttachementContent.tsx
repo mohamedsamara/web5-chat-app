@@ -1,30 +1,42 @@
 import { Attachment } from "lib/types";
-import MsgPhoto from "./MsgPhoto";
-import MsgVideo from "./MsgVideo";
+import PhotoAttachment from "./PhotoAttachment";
+import VideoAttachment from "./VideoAttachment";
+import FileAttachment from "./FileAttachment";
 
 type Props = {
   className?: string;
   isPreview?: boolean;
   autoPlay?: boolean;
   attachment: Attachment;
+  caption: string;
 };
 
 const AttachementContent = ({
   className,
   isPreview = false,
   autoPlay = false,
+  caption,
   attachment,
 }: Props) => {
   switch (attachment.type) {
     case "IMAGE":
-      return <MsgPhoto className={className} attachment={attachment} />;
+      return <PhotoAttachment className={className} attachment={attachment} />;
     case "VIDEO":
       return (
-        <MsgVideo
+        <VideoAttachment
           className={className}
           attachment={attachment}
           isPreview={isPreview}
           autoPlay={autoPlay}
+        />
+      );
+    case "FILE":
+      return (
+        <FileAttachment
+          className={className}
+          isPreview={isPreview}
+          caption={caption}
+          attachment={attachment}
         />
       );
     default:

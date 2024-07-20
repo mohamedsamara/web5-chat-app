@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useAtom, useSetAtom, useAtomValue } from "jotai";
+import { Record } from "@web5/api";
 
 import { useWeb5 } from "lib/contexts";
 import {
@@ -38,7 +39,6 @@ import {
   updateRecord,
 } from "lib/utils";
 import { useProfile } from "./profile";
-import { Record } from "@web5/api";
 
 export const useSelectedChat = (chatUid: string) => {
   const selectedChat = useAtomValue(
@@ -211,7 +211,7 @@ export const useChat = () => {
     try {
       if (!web5 || !did) return;
 
-      const { chat, replyUid, text, blob, attachmentType } = payload;
+      const { chat, replyUid, text, blob, attachment } = payload;
 
       /* Default to one-to-one conversation. */
       const recipientDid = getConversationRecipientDid(chat, did);
@@ -232,9 +232,12 @@ export const useChat = () => {
 
       if (!attachmentRecord) return;
 
-      const attachment = {
-        type: attachmentType,
+      const attachmentToAdd = {
         recordId: attachmentRecord.id,
+        type: attachment.type,
+        name: attachment.name,
+        size: attachment.size,
+        blobType: blob.type,
       };
 
       /* create msg with attachment type */
@@ -248,7 +251,7 @@ export const useChat = () => {
             avatar: profile.avatar,
             did,
           },
-          attachment,
+          attachment: attachmentToAdd,
           replyUid,
           createdAt: new Date().getTime(),
         },
@@ -435,7 +438,7 @@ export const useAttachment = ({
       if (!response.record) return;
       const data = await response.record.data.blob();
       processBlob(attachment.recordId, data);
-      setChatsAttachments({ ...attachment, url: "", blob: data });
+      setChatsAttachments({ ...attachment, blob: data });
     } catch (error) {
       console.log("error", error);
     }

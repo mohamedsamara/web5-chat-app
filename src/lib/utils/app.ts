@@ -256,7 +256,24 @@ export const getConversationRecipientDid = (chat: Chat, did: string) => {
 export const isAttachmentTypeAllowed = (type: string) =>
   ProtocolDefinition.types.attachment.dataFormats.includes(type);
 
-export const getTypeOfAttachment = (fileType: string) => {
-  const type = fileType.substring(0, fileType.indexOf("/"));
+export const getTypeOfAttachment = (mimeType: string) => {
+  let type = "file";
+  if (mimeType.startsWith("image/")) type = "image";
+  if (mimeType.includes("video/")) type = "video";
+
   return CHAT_MSG_ATTACHMENT_TYPES[type.toUpperCase() as MsgAttachmentType];
+};
+
+export const formatFileSize = (bytes: number, precision = 0) => {
+  const units = ["B", "kB", "MB", "GB"];
+  const exponent = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1
+  );
+  const mantissa = bytes / 1024 ** exponent;
+  const formattedMantissa =
+    precision === 0
+      ? Math.round(mantissa).toString()
+      : mantissa.toPrecision(precision);
+  return `${formattedMantissa} ${units[exponent]}`;
 };

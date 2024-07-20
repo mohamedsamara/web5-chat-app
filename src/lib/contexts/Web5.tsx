@@ -12,7 +12,7 @@ import { Web5 } from "@web5/api";
 import { ProtocolDefinition } from "lib/protocols";
 import SpinnerOverlay from "components/SpinnerOverlay";
 
-const DID_STORAGE_KEY = "did-key";
+// const DID_STORAGE_KEY = "did-key";
 
 interface Web5ContextType {
   web5: Web5 | null;
@@ -39,19 +39,19 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
 
   const connect = useCallback(async () => {
     try {
-      const storedDid = localStorage.getItem(DID_STORAGE_KEY);
+      // const storedDid = localStorage.getItem(DID_STORAGE_KEY);
 
       const { web5, did } = await Web5.connect({ sync: "2s" });
-      if (did !== storedDid) {
-        console.log("");
-      }
+      // if (did !== storedDid) {
+      console.log("");
+      // }
 
       setWeb5(web5);
       setDid(did);
 
       configureProtocol(web5, did);
 
-      localStorage.setItem(DID_STORAGE_KEY, did);
+      // localStorage.setItem(DID_STORAGE_KEY, did);
     } catch (error) {
       // console.log("error", error);
     }
@@ -60,7 +60,7 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
   const disconnect = () => {
     setWeb5(null);
     setDid(null);
-    localStorage.removeItem(DID_STORAGE_KEY);
+    // localStorage.removeItem(DID_STORAGE_KEY);
   };
 
   const configureProtocol = async (web5: Web5, did: string) => {

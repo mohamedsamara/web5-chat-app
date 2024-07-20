@@ -22,7 +22,11 @@ export type CreateMsgPayload = {
 
 export type CreateAttachmentMsgPayload = CreateMsgPayload & {
   blob: Blob;
-  attachmentType: MsgAttachmentType;
+  attachment: {
+    type: MsgAttachmentType;
+    name: string;
+    size: number;
+  };
 };
 
 export type CreateOrUpdateLastMsgPayload = {
@@ -82,8 +86,10 @@ export type ChatMsg = {
 export type Attachment = {
   recordId: string;
   type: MsgAttachmentType;
-  url?: string;
+  name: string;
+  size: number;
   blob: Blob;
+  mimeType: AttachmentMimeType;
 };
 
 /* UI */
@@ -103,3 +109,12 @@ export type AttachmentViewer = {
 };
 
 export type AttachmentDisplayStatus = keyof typeof ATTACHMENT_DISPLAY_STATUS;
+
+export type AttachmentMimeType =
+  | "image/gif"
+  | "image/png"
+  | "image/jpeg"
+  | "image/webp"
+  | "video/mp4"
+  | "application/json"
+  | "text/plain";

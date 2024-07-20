@@ -15,7 +15,12 @@ import {
   isMsgSwipingAtom,
   attachmentViewerAtom,
 } from "lib/stores";
-import { AttachmentViewerParams, AttachmentDisplayStatus } from "lib/types";
+import {
+  AttachmentViewerParams,
+  AttachmentDisplayStatus,
+  MsgAttachmentType,
+  ChatMsg,
+} from "lib/types";
 
 type CopyStatus = "inactive" | "copied" | "failed";
 export const useCopyToClipboard = (
@@ -136,6 +141,21 @@ export const useAttachmentViewer = () => {
     setAttachmentViewer({ visible: false, params: null });
 
   return { attachmentViewer, openViewer, closeViewer };
+};
+
+export const useIsAttachmentViewable = (type: MsgAttachmentType) => {
+  return { isViewable: type !== "FILE" };
+};
+
+export const useIsPreviewAttachment = (type: MsgAttachmentType) => {
+  const isPreview = type === "VIDEO";
+  return { isPreview };
+};
+
+export const useIsSwipable = (msg: ChatMsg) => {
+  let isSwipeable = true;
+  if (msg.type === "ATTACHMENT" && !msg.attachment) isSwipeable = false;
+  return { isSwipeable };
 };
 
 type Handler = (event: MouseEvent) => void;

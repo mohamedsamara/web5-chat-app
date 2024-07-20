@@ -12,11 +12,11 @@ type Props = {
   attachment: Attachment;
 };
 
-const MsgPhoto = ({ className, attachment }: Props) => {
+const PhotoAttachment = ({ className, attachment }: Props) => {
   const photoRef = useRef<HTMLImageElement | null>(null);
   const { ref, inView } = useInView({
     threshold: 0,
-    rootMargin: "200px",
+    rootMargin: "0px",
     triggerOnce: true,
   });
 
@@ -60,4 +60,4 @@ const MsgPhoto = ({ className, attachment }: Props) => {
   );
 };
 
-export default MsgPhoto;
+export default PhotoAttachment;

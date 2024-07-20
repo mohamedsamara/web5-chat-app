@@ -1,13 +1,14 @@
 import { useState, useRef, ChangeEvent } from "react";
-import { Plus, FileImage, FileVideo, Send } from "lucide-react";
+import { Plus, Send, Paperclip } from "lucide-react";
 import TextareaAutosize from "react-textarea-autosize";
 
 import { useChat } from "lib/hooks";
-import { Chat, MsgAttachmentType } from "lib/types";
+import { Chat } from "lib/types";
 import { getTypeOfAttachment, isAttachmentTypeAllowed } from "lib/utils";
 import { Button } from "components/ui/button";
 import Dialog from "components/Dialog";
 import Loader from "components/Loader";
+import AttachmentUploaderPreview from "./AttachmentUploaderPreview";
 
 const AttachmentUploader = ({ chat }: { chat: Chat }) => {
   const { createAttachmentMsg } = useChat();
@@ -38,7 +39,6 @@ const AttachmentUploader = ({ chat }: { chat: Chat }) => {
 
     if (attachment.size > 1048576) {
       console.log("exceeds 1 MB");
-
       return;
     }
 
@@ -52,14 +52,17 @@ const AttachmentUploader = ({ chat }: { chat: Chat }) => {
       setIsSubmitting(true);
 
       const blob = new Blob([attachment], { type: attachment.type });
-      const attachmentType = getTypeOfAttachment(attachment.type);
 
       await createAttachmentMsg({
         blob,
         chat,
         text: caption,
         replyUid: "",
-        attachmentType,
+        attachment: {
+          type: getTypeOfAttachment(attachment.type),
+          name: attachment.name,
+          size: attachment.size,
+        },
       });
 
       setAttachment(null);
@@ -74,7 +77,7 @@ const AttachmentUploader = ({ chat }: { chat: Chat }) => {
 
   return (
     <Dialog
-      title="Share photos and videos"
+      title="Share attachments"
       open={modalOpen}
       onOpenChange={setModalOpen}
       onClose={onModalClose}
@@ -92,26 +95,20 @@ const AttachmentUploader = ({ chat }: { chat: Chat }) => {
         <div className="flex flex-col justify-center flex-1 mx-auto">
           {attachment ? (
             <div className="rounded-md max-w-screen-md max-h-96 overflow-hidden">
-              <AttchementContentType
-                type={getTypeOfAttachment(attachment.type)}
-                url={URL.createObjectURL(attachment)}
-              />
+              <AttachmentUploaderPreview attachment={attachment} />
             </div>
           ) : (
-            <div className="flex items-center justify-center gap-2">
-              <FileImage className="w-16 h-16" />
-              <FileVideo className="w-16 h-16 -rotate-12" />
-            </div>
+            <Paperclip className="w-16 h-16" />
           )}
         </div>
 
         <div className="flex flex-col gap-10">
-          <Button onClick={onClick}>Choose photo or video</Button>
+          <Button onClick={onClick}>Choose attachment</Button>
           <div className="flex gap-3">
             <TextareaAutosize
               className="self-center w-full p-2 px-3 py-2 transition-all border border-input bg-background rounded-md ring-offset-background resize-none placeholder:text-muted-foreground focus:outline-none focus:shadow-outline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 no-scrollbar"
               placeholder="Add caption..."
-              maxRows={10}
+              maxRows={3}
               onChange={onTextChange}
               value={caption}
             />
@@ -131,7 +128,7 @@ const AttachmentUploader = ({ chat }: { chat: Chat }) => {
 
         <input
           type="file"
-          accept="image/*, video/*"
+          accept="image/*,video/*,text/plain,application/JSON"
           // accept=".pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
           ref={hiddenFileInput}
           onChange={_onChange}
@@ -143,24 +140,3 @@ const AttachmentUploader = ({ chat }: { chat: Chat }) => {
 };
 
 export default AttachmentUploader;
-
-const AttchementContentType = ({
-  type,
-  url,
-}: {
-  type: MsgAttachmentType;
-  url: string;
-}) => {
-  switch (type) {
-    case "IMAGE":
-      return <img src={url} />;
-    case "VIDEO":
-      return (
-        <video>
-          <source src={url} />
-        </video>
-      );
-    default:
-      return <></>;
-  }
-};

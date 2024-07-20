@@ -4,7 +4,7 @@ import { useSwipeable } from "react-swipeable";
 
 import EE, { REPLY_MSG } from "lib/ee";
 import { ChatMsg } from "lib/types";
-import { useIsMsgSwiping } from "lib/hooks";
+import { useIsMsgSwiping, useIsSwipable } from "lib/hooks";
 import ChatBubble from "./ChatBubble";
 import MsgContent from "./MsgContent";
 import ReplyContent from "./ReplyContent";
@@ -16,6 +16,7 @@ type Props = {
 };
 
 const Msg = ({ msg, isHighlighted, onReplyClick }: Props) => {
+  const { isSwipeable } = useIsSwipable(msg);
   const { isMsgSwiping, setIsMsgSwiping } = useIsMsgSwiping();
   const msgTime = format(msg.createdAt, "p");
   const [deltaX, setDeltaX] = useState(0);
@@ -51,7 +52,7 @@ const Msg = ({ msg, isHighlighted, onReplyClick }: Props) => {
   return (
     <div
       className="transition-all"
-      {...handlers}
+      {...(isSwipeable && handlers)}
       style={{
         transform: `translate(${deltaX}px)`,
       }}
