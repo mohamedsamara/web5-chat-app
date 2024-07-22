@@ -1,5 +1,4 @@
 import { PropsWithChildren } from "react";
-import { X } from "lucide-react";
 
 import {
   Dialog as RadixDialog,
@@ -9,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "components/ui/dialog";
-import { Button } from "components/ui/button";
+import { CloseButton } from "../Buttons";
 
 type Props = PropsWithChildren & {
   title: string;
@@ -35,15 +34,7 @@ const Dialog = ({
           <div className="flex justify-between items-center">
             <DialogTitle>{title}</DialogTitle>
             <DialogClose asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="rounded-full h-8 w-8"
-                onClick={onClose}
-              >
-                <span className="sr-only">Close dialog</span>
-                <X className="h-4 w-4" />
-              </Button>
+              <CloseButton variant="ghost" onClick={onClose} />
             </DialogClose>
           </div>
         </DialogHeader>

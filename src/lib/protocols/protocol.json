@@ -26,6 +26,8 @@
         "image/jpeg",
         "image/webp",
         "video/mp4",
+        "audio/webm",
+        "audio/mp4",
         "application/json",
         "text/plain"
       ]

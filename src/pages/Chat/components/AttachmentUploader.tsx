@@ -62,6 +62,7 @@ const AttachmentUploader = ({ chat }: { chat: Chat }) => {
           type: getTypeOfAttachment(attachment.type),
           name: attachment.name,
           size: attachment.size,
+          mimeType: blob.type,
         },
       });
 

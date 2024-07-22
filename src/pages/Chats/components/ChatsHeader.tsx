@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
 
-import CopyButton from "components/CopyButton";
+import { CopyButton } from "components/Buttons";
 import UserAvatar from "components/UserAvatar";
 import Dialog from "components/Dialog";
 import CreateConversation from "./CreateConversation";

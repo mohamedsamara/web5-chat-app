@@ -95,3 +95,57 @@ export const blobToBase64 = (blob: Blob) => {
 
 export const getAvatarUrl = (base64: string) =>
   `data:image/png;base64,${base64}`;
+
+export const formatFileSize = (bytes: number, precision = 0) => {
+  const units = ["B", "kB", "MB", "GB"];
+  const exponent = Math.min(
+    Math.floor(Math.log(bytes) / Math.log(1024)),
+    units.length - 1
+  );
+  const mantissa = bytes / 1024 ** exponent;
+  const formattedMantissa =
+    precision === 0
+      ? Math.round(mantissa).toString()
+      : mantissa.toPrecision(precision);
+  return `${formattedMantissa} ${units[exponent]}`;
+};
+
+export const divider = (num: number, divisor: number) => [
+  Math.floor(num / divisor),
+  num % divisor,
+];
+
+export const formatDuration = (duration?: number) => {
+  if (!duration || duration < 0) return "00:00";
+
+  const [hours, hoursLeftover] = divider(duration, 3600);
+  const [minutes, seconds] = divider(hoursLeftover, 60);
+  const roundedSeconds = Math.ceil(seconds);
+
+  const prependHrsZero = hours.toString().length === 1 ? "0" : "";
+  const prependMinZero = minutes.toString().length === 1 ? "0" : "";
+  const prependSecZero = roundedSeconds.toString().length === 1 ? "0" : "";
+  const minSec = `${prependMinZero}${minutes}:${prependSecZero}${roundedSeconds}`;
+
+  return hours ? `${prependHrsZero}${hours}:` + minSec : minSec;
+};
+
+export const generateAudioRecordingName = (mimeType: string) => {
+  return `audio_recording_${new Date().toISOString()}.${getExtensionFromMimeType(
+    mimeType
+  )}`;
+};
+
+export const getExtensionFromMimeType = (mimeType: string) => {
+  const match = mimeType.match(/\/([^/;]+)/);
+  return match && match[1];
+};
+
+export const isSafari = () => {
+  if (typeof navigator === "undefined") return false;
+  return /^((?!chrome|android).)*safari/i.test(navigator.userAgent || "");
+};
+
+export const getAudioMimeType = (mimeType: string) => {
+  return mimeType.substring(0, mimeType.indexOf(";"));
+};

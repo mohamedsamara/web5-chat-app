@@ -5,12 +5,11 @@ import {
   useRef,
   PropsWithChildren,
 } from "react";
-import { X } from "lucide-react";
 
 import { useClickOutside } from "lib/hooks";
 import { cn } from "lib/utils";
-import { Button } from "components/ui/button";
 import Portal from "./Portal";
+import { CloseButton } from "../Buttons";
 
 type Props = PropsWithChildren & {
   visible: boolean;
@@ -70,15 +69,7 @@ const Modal = ({ visible, onClose, children }: Props) => {
       >
         <div ref={modalRef}>{children}</div>
         <div className="absolute top-[10px] right-[14px] z-[3]">
-          <Button
-            variant="none"
-            size="icon"
-            className="rounded-full h-8 w-8"
-            onClick={closeModal}
-          >
-            <span className="sr-only">Close modal</span>
-            <X className="h-6 w-6 text-white" />
-          </Button>
+          <CloseButton onClick={closeModal} iconStyles="text-white h-12 w-12" />
         </div>
       </div>
     </Portal>

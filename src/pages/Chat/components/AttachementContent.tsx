@@ -2,6 +2,7 @@ import { Attachment } from "lib/types";
 import PhotoAttachment from "./PhotoAttachment";
 import VideoAttachment from "./VideoAttachment";
 import FileAttachment from "./FileAttachment";
+import AudioAttachment from "./AudioAttachment";
 
 type Props = {
   className?: string;
@@ -36,6 +37,14 @@ const AttachementContent = ({
           className={className}
           isPreview={isPreview}
           caption={caption}
+          attachment={attachment}
+        />
+      );
+    case "AUDIO":
+      return (
+        <AudioAttachment
+          className={className}
+          isPreview={isPreview}
           attachment={attachment}
         />
       );

@@ -8,7 +8,7 @@ import {
   useIsAttachmentViewable,
   useIsMsgSwiping,
 } from "lib/hooks";
-import BareButton from "components/BareButton";
+import { BareButton } from "components/Buttons";
 
 type Props = PropsWithChildren & {
   attachment: Attachment;

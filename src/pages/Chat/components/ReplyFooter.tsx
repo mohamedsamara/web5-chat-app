@@ -1,9 +1,7 @@
-import { X } from "lucide-react";
-
 import { ChatMsg } from "lib/types";
 import { useReplyScrollSpy } from "lib/hooks";
-import { Button } from "components/ui/button";
 import ReplyContent from "./ReplyContent";
+import { CloseButton } from "@/components/Buttons";
 
 type Props = {
   msg: ChatMsg;
@@ -18,14 +16,7 @@ const ReplyFooter = ({ msg, onClose }: Props) => {
       <div className="flex-1 min-w-0">
         <ReplyContent msg={msg} onClick={scrollToMsg} />
       </div>
-      <Button
-        variant="ghost"
-        size="icon"
-        className="rounded-full h-6 w-6"
-        onClick={onClose}
-      >
-        <X className="h-4 w-4" />
-      </Button>
+      <CloseButton variant="ghost" onClick={onClose} />
     </div>
   );
 };

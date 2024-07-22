@@ -6,7 +6,6 @@ import {
   useMemo,
   useRef,
   RefObject,
-  ChangeEvent,
 } from "react";
 import { useAtom } from "jotai";
 
@@ -15,12 +14,7 @@ import {
   isMsgSwipingAtom,
   attachmentViewerAtom,
 } from "lib/stores";
-import {
-  AttachmentViewerParams,
-  AttachmentDisplayStatus,
-  MsgAttachmentType,
-  ChatMsg,
-} from "lib/types";
+import { AttachmentViewerParams, MsgAttachmentType, ChatMsg } from "lib/types";
 
 type CopyStatus = "inactive" | "copied" | "failed";
 export const useCopyToClipboard = (
@@ -144,7 +138,8 @@ export const useAttachmentViewer = () => {
 };
 
 export const useIsAttachmentViewable = (type: MsgAttachmentType) => {
-  return { isViewable: type !== "FILE" };
+  const isNotAllowed = type === "FILE" || type === "AUDIO";
+  return { isViewable: !isNotAllowed };
 };
 
 export const useIsPreviewAttachment = (type: MsgAttachmentType) => {
@@ -176,114 +171,30 @@ export const useClickOutside = <T extends HTMLElement = HTMLElement>(
   }, [ref, handler]);
 };
 
-type ElementRef = RefObject<HTMLVideoElement>;
-type SelectEvent = ChangeEvent<HTMLSelectElement>;
-
-type PlayerState = {
-  isPlaying: boolean;
-  progress: number;
-  speed: number;
-  isMuted: boolean;
-};
-
-type PlayerProps = {
-  playerState: PlayerState;
-  togglePlay: () => void;
-  handleOnTimeUpdate: () => void;
-  handleVideoProgress: (value: number) => void;
-  handleVideoSpeed: (e: SelectEvent) => void;
-  toggleMute: () => void;
-};
-
-export const usePlayer = (
-  videoElement: ElementRef,
-  autoPlay: boolean,
-  status: AttachmentDisplayStatus
-): PlayerProps => {
-  const [playerState, setPlayerState] = useState<PlayerState>({
-    isPlaying: false,
-    progress: 0,
-    speed: 1,
-    isMuted: false,
-  });
-
+export const useDimension = <T extends HTMLElement = HTMLElement>(
+  ref: RefObject<T>
+) => {
+  const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
   useEffect(() => {
-    if (status === "LOADED" && autoPlay) {
-      togglePlay();
+    const getDimensions = () => ({
+      width: ref.current?.offsetWidth || 0,
+      height: ref.current?.offsetHeight || 0,
+    });
+
+    const handleResize = () => {
+      setDimensions(getDimensions());
+    };
+
+    if (ref.current) {
+      setDimensions(getDimensions());
     }
-  }, [videoElement, autoPlay, status]);
 
-  useEffect(() => {
-    playerState.isPlaying
-      ? videoElement.current!.play()
-      : videoElement.current!.pause();
-  }, [playerState.isPlaying, videoElement]);
+    window.addEventListener("resize", handleResize);
 
-  const togglePlay = () => {
-    setPlayerState({
-      ...playerState,
-      isPlaying: !playerState.isPlaying,
-    });
-  };
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, [ref]);
 
-  useEffect(() => {
-    if (playerState.progress === 100) {
-      setPlayerState({
-        ...playerState,
-        isPlaying: false,
-        progress: 0,
-      });
-    }
-  }, [playerState.progress]);
-
-  const handleOnTimeUpdate = () => {
-    const progress =
-      (videoElement.current!.currentTime / videoElement.current!.duration) *
-      100;
-    setPlayerState({
-      ...playerState,
-      progress,
-    });
-  };
-
-  const handleVideoProgress = (value: number) => {
-    const manualChange = Number(value);
-    videoElement.current!.currentTime =
-      (videoElement.current!.duration / 100) * manualChange;
-    setPlayerState({
-      ...playerState,
-      progress: manualChange,
-    });
-  };
-
-  const handleVideoSpeed = (e: SelectEvent) => {
-    const speed = Number(e.target.value);
-    videoElement.current!.playbackRate = speed;
-    setPlayerState({
-      ...playerState,
-      speed,
-    });
-  };
-
-  useEffect(() => {
-    playerState.isMuted
-      ? (videoElement.current!.muted = true)
-      : (videoElement.current!.muted = false);
-  }, [playerState.isMuted, videoElement]);
-
-  const toggleMute = () => {
-    setPlayerState({
-      ...playerState,
-      isMuted: !playerState.isMuted,
-    });
-  };
-
-  return {
-    playerState,
-    togglePlay,
-    handleOnTimeUpdate,
-    handleVideoProgress,
-    handleVideoSpeed,
-    toggleMute,
-  };
+  return dimensions;
 };

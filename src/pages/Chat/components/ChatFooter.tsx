@@ -11,12 +11,14 @@ import Loader from "components/Loader";
 import { Button } from "components/ui/button";
 import ReplyFooter from "./ReplyFooter";
 import AttachmentUploader from "./AttachmentUploader";
+import AudioRecorder from "./AudioRecorder";
 
 const ChatFooter = ({ chat }: { chat: Chat }) => {
   const { createMsg } = useChat();
   const msgRef = useRef<HTMLTextAreaElement | null>(null);
   const [msg, setMsg] = useState("");
-  const [sendLoading, setSendLoading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const [reply, setReply] = useState<ChatMsg | null>(null);
   const location = useLocation();
 
@@ -41,8 +43,7 @@ const ChatFooter = ({ chat }: { chat: Chat }) => {
 
   const onCreateMsg = async () => {
     try {
-      setSendLoading(true);
-
+      setIsSubmitting(true);
       await createMsg({
         chat,
         text: msg.trim(),
@@ -54,7 +55,7 @@ const ChatFooter = ({ chat }: { chat: Chat }) => {
     } catch (error) {
       console.log("error");
     } finally {
-      setSendLoading(false);
+      setIsSubmitting(false);
     }
   };
 
@@ -66,7 +67,7 @@ const ChatFooter = ({ chat }: { chat: Chat }) => {
     setReply(null);
   };
 
-  const isSendBtnDisabled = msg.trim().length === 0 || sendLoading;
+  const isSendBtnDisabled = msg.trim().length === 0 || isSubmitting;
 
   return (
     <>
@@ -74,7 +75,7 @@ const ChatFooter = ({ chat }: { chat: Chat }) => {
         {reply && <ReplyFooter msg={reply} onClose={onCloseReply} />}
       </Fade>
 
-      <div className="flex gap-3 px-4 py-[2.5px] border-t border-t-gray-200 bg-white w-full">
+      <div className="relative flex gap-3 px-4 py-[2.5px] border-t border-t-gray-200 bg-white w-full">
         <div className="self-end py-2">
           <AttachmentUploader chat={chat} />
         </div>
@@ -95,8 +96,11 @@ const ChatFooter = ({ chat }: { chat: Chat }) => {
             onClick={onCreateMsg}
             disabled={isSendBtnDisabled}
           >
-            {sendLoading ? <Loader /> : <Send className="h-4 w-4" />}
+            {isSubmitting ? <Loader /> : <Send className="h-4 w-4" />}
           </Button>
+        </div>
+        <div className="self-end py-2">
+          <AudioRecorder chat={chat} />
         </div>
       </div>
     </>

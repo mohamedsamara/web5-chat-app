@@ -7,6 +7,7 @@ export enum CHAT_MSG_ATTACHMENT_TYPES {
   VIDEO = "VIDEO",
   IMAGE = "IMAGE",
   FILE = "FILE",
+  AUDIO = "AUDIO",
 }
 
 export enum CHAT_TYPES {
@@ -19,4 +20,11 @@ export enum ATTACHMENT_DISPLAY_STATUS {
   LOADING,
   LOADED,
   FAILED,
+}
+
+export enum AUDIO_RECORDING_STATUS {
+  NONE,
+  PAUSED,
+  RECORDING,
+  STOPPED,
 }

@@ -39,28 +39,20 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
 
   const connect = useCallback(async () => {
     try {
-      // const storedDid = localStorage.getItem(DID_STORAGE_KEY);
-
       const { web5, did } = await Web5.connect({ sync: "2s" });
-      // if (did !== storedDid) {
-      console.log("");
-      // }
 
       setWeb5(web5);
       setDid(did);
 
       configureProtocol(web5, did);
-
-      // localStorage.setItem(DID_STORAGE_KEY, did);
     } catch (error) {
-      // console.log("error", error);
+      console.log("error", error);
     }
   }, []);
 
   const disconnect = () => {
     setWeb5(null);
     setDid(null);
-    // localStorage.removeItem(DID_STORAGE_KEY);
   };
 
   const configureProtocol = async (web5: Web5, did: string) => {
@@ -74,7 +66,7 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
       });
 
       if (status.code !== 200) {
-        alert("Error querying protocols");
+        console.error("Error querying protocols");
         console.error("Error querying protocols", status);
         return;
       }

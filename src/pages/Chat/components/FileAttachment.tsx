@@ -32,7 +32,7 @@ const FileAttachment = ({ className, isPreview, attachment }: Props) => {
     return (
       <div
         ref={ref}
-        className="flex items-center gap-1 text-gray-700 text-sm select-none w-28"
+        className="flex items-center gap-1 text-gray-700 text-sm select-none max-w-28"
       >
         <MimeIcon mimeType={attachment.mimeType} />
         <p className="truncate">{fileName}</p>

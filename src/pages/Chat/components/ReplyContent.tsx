@@ -73,7 +73,7 @@ const ReplyContentType = ({
           />
           <div className="flex-1 min-w-0">
             {msgText && (
-              <MsgText className="truncate capitalize" text={msg.text} />
+              <MsgText className="truncate capitalize" text={msgText} />
             )}
           </div>
         </div>

@@ -3,6 +3,7 @@ import {
   CHAT_MSG_TYPES,
   CHAT_MSG_ATTACHMENT_TYPES,
   ATTACHMENT_DISPLAY_STATUS,
+  AUDIO_RECORDING_STATUS,
 } from "lib/constants";
 
 export type ChatType = keyof typeof CHAT_TYPES;
@@ -26,6 +27,8 @@ export type CreateAttachmentMsgPayload = CreateMsgPayload & {
     type: MsgAttachmentType;
     name: string;
     size: number;
+    mimeType: string;
+    duration?: number;
   };
 };
 
@@ -90,6 +93,7 @@ export type Attachment = {
   size: number;
   blob: Blob;
   mimeType: AttachmentMimeType;
+  duration?: number;
 };
 
 /* UI */
@@ -109,6 +113,7 @@ export type AttachmentViewer = {
 };
 
 export type AttachmentDisplayStatus = keyof typeof ATTACHMENT_DISPLAY_STATUS;
+export type AudioRecordingStatus = keyof typeof AUDIO_RECORDING_STATUS;
 
 export type AttachmentMimeType =
   | "image/gif"

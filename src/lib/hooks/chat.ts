@@ -224,7 +224,7 @@ export const useChat = () => {
           protocol: ProtocolDefinition.protocol,
           protocolPath: "chat/attachment",
           schema: ProtocolDefinition.types.attachment.schema,
-          dataFormat: blob.type,
+          dataFormat: attachment.mimeType,
           recipient: recipientDid,
           parentContextId: chatRecordId,
         },
@@ -234,10 +234,7 @@ export const useChat = () => {
 
       const attachmentToAdd = {
         recordId: attachmentRecord.id,
-        type: attachment.type,
-        name: attachment.name,
-        size: attachment.size,
-        blobType: blob.type,
+        ...attachment,
       };
 
       /* create msg with attachment type */
@@ -450,9 +447,11 @@ export const useAttachment = ({
 export const useMsgText = (msg: ChatMsg, isReply: boolean = false): string => {
   const t = useMemo(() => {
     const text =
-      msg.text || isReply ? msg.text : msg.attachment?.type.toLowerCase() || "";
+      msg.text || isReply
+        ? msg.text
+        : msg.attachment?.type.toLowerCase() + " Attachment" || "";
     return text;
-  }, [msg, isReply]);
+  }, [msg]);
 
   return t;
 };
