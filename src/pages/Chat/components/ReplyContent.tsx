@@ -3,6 +3,7 @@ import { ChatMsg } from "lib/types";
 import { useMsgText } from "lib/hooks";
 import MsgText from "./MsgText";
 import AttachementContent from "./AttachementContent";
+import { BareButton } from "@/components/Buttons";
 
 type Props = {
   className?: string;
@@ -24,22 +25,24 @@ const ReplyContent = ({
   const name = msg.isMe ? "You" : msg.sender.name;
 
   return (
-    <div
-      className={cn("flex justify-start text-left cursor-pointer", className)}
-      onClick={() => onClick(msg.uid)}
-    >
-      <div
-        className={cn(
-          "flex flex-col gap-1 w-full px-2 border-l-4 pt-1 pb-2",
-          contentStyles
-        )}
-        style={{ borderLeftColor: color }}
+    <div className={className}>
+      <BareButton
+        className="flex justify-start text-left"
+        onClick={() => onClick(msg.uid)}
       >
-        <span className="text-sm" style={{ color }}>
-          {name}
-        </span>
-        <ReplyContentType msg={msg} isReply={isReply} />
-      </div>
+        <div
+          className={cn(
+            "flex flex-col gap-1 w-full px-2 border-l-4 pt-1 pb-2",
+            contentStyles
+          )}
+          style={{ borderLeftColor: color }}
+        >
+          <span className="text-sm" style={{ color }}>
+            {name}
+          </span>
+          <ReplyContentType msg={msg} isReply={isReply} />
+        </div>
+      </BareButton>
     </div>
   );
 };
@@ -71,11 +74,11 @@ const ReplyContentType = ({
               isReply && !msgText ? "w-full" : "w-16"
             )}
           />
-          <div className="flex-1 min-w-0">
-            {msgText && (
+          {msgText && (
+            <div className="flex-1 min-w-0">
               <MsgText className="truncate capitalize" text={msgText} />
-            )}
-          </div>
+            </div>
+          )}
         </div>
       );
     default:

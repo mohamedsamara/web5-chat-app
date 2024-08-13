@@ -21,11 +21,7 @@ const MsgAttachment = ({ msg, ...rest }: Props) => {
           className={msg.text.length > 0 ? "pt-4 px-3" : "p-3"}
         />
       ) : (
-        <MsgAttachmentDisplay
-          caption={msg.text}
-          attachment={msg.attachment}
-          {...rest}
-        />
+        <MsgAttachmentDisplay msg={msg} attachment={msg.attachment} {...rest} />
       )}
     </>
   );
@@ -33,27 +29,27 @@ const MsgAttachment = ({ msg, ...rest }: Props) => {
 
 export default MsgAttachment;
 
-type MsgAttachmentDisplayProps = ExtraProps & {
-  caption: string;
+type MsgAttachmentDisplayProps = Props & {
   attachment: Attachment;
+  msg: ChatMsg;
 };
 
 const MsgAttachmentDisplay = ({
-  caption,
   attachment,
+  msg,
 }: MsgAttachmentDisplayProps) => {
   const { isPreview } = useIsPreviewAttachment(attachment.type);
 
   return (
     <div>
-      <MsgAttachmentAnchor attachment={attachment} caption={caption}>
+      <MsgAttachmentAnchor attachment={attachment} msg={msg}>
         <AttachementContent
-          caption={caption}
+          caption={msg.text}
           attachment={attachment}
           isPreview={isPreview}
         />
       </MsgAttachmentAnchor>
-      {caption && <MsgText className="p-3" text={caption} />}
+      {msg.text && <MsgText className="p-3" text={msg.text} />}
     </div>
   );
 };

@@ -9,13 +9,14 @@ import {
 import { useProfile } from "lib/hooks";
 import Chats from "pages/Chats";
 import Chat from "pages/Chat";
+import ChatSettings from "pages/ChatSettings";
 import NoMatch from "pages/NoMatch";
-
 import Profile from "pages/Profile";
-import SpinnerOverlay from "components/SpinnerOverlay";
+
 import ProtectedRoute from "./routes/ProtectedRoute";
 import PublicRoute from "./routes/PublicRoute";
-import Modals from "./components/Modals";
+import Modals from "components/Modals";
+import SpinnerOverlay from "components/SpinnerOverlay";
 
 const App = () => {
   const { fetchProfile, profileFetched } = useProfile();
@@ -38,6 +39,7 @@ const App = () => {
             <Route path="/" element={<Navigate to="/chats" />} />
             <Route path="chats" element={<Chats />}>
               <Route path=":chatUid" element={<Chat />} />
+              <Route path=":chatUid/settings" element={<ChatSettings />} />
             </Route>
           </Route>
           <Route path="*" element={<NoMatch />} />

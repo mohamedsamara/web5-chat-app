@@ -12,11 +12,12 @@ import Portal from "./Portal";
 import { CloseButton } from "../Buttons";
 
 type Props = PropsWithChildren & {
+  className?: string;
   visible: boolean;
   onClose: () => void;
 };
 
-const Modal = ({ visible, onClose, children }: Props) => {
+const Modal = ({ className, visible, onClose, children }: Props) => {
   const [isVisible, setIsVisible] = useState(false);
   const modalRef = useRef(null);
 
@@ -51,7 +52,7 @@ const Modal = ({ visible, onClose, children }: Props) => {
     <Portal>
       <div
         className={cn(
-          "fixed w-screen h-screen flex justify-center items-center invisible opacity-0 top-0 inset-x-0 bg-black/80 z-[1]",
+          "fixed w-screen h-screen flex justify-center items-center invisible opacity-0 top-0 inset-x-0 bg-black/90 z-[1]",
           isVisible ? "visible opacity-100" : "invisible"
         )}
         style={{
@@ -67,7 +68,9 @@ const Modal = ({ visible, onClose, children }: Props) => {
           transition: "visibility 0.2s linear, opacity 0.2s linear",
         }}
       >
-        <div ref={modalRef}>{children}</div>
+        <div className={className} ref={modalRef}>
+          {children}
+        </div>
         <div className="absolute top-[10px] right-[14px] z-[3]">
           <CloseButton onClick={closeModal} iconStyles="text-white h-12 w-12" />
         </div>

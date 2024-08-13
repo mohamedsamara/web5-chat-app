@@ -8,6 +8,7 @@ import {
   Attachment,
   AttachmentDisplayStatus,
   Chat,
+  ChatAttachmentMsgsFilterPayload,
   ChatMsg,
   CreateAttachmentMsgPayload,
   CreateMsgPayload,
@@ -23,9 +24,11 @@ import {
   chatsFetchedAtom,
   msgsFetchedAtom,
   attachmentsAtom,
-  updateAttachmentsAtom,
-  updateChatLastMsgAtom,
-  updateMsgsAtom,
+  setAttachmentsAtom,
+  setChatLastMsgAtom,
+  setMsgsAtom,
+  setChatAttachmentMsgsAtom,
+  filterChatAttachmentMsgsAtom,
 } from "lib/stores";
 import {
   blobToBase64,
@@ -63,7 +66,7 @@ export const useChat = () => {
   const { profile } = useProfile();
   const [chats, setChats] = useAtom(chatsAtom);
   const [chatsFetched, setChatsFetched] = useAtom(chatsFetchedAtom);
-  const setMsgs = useSetAtom(updateMsgsAtom);
+  const setMsgs = useSetAtom(setMsgsAtom);
   const [msgsFetched, setMsgsFetched] = useAtom(msgsFetchedAtom);
 
   const { createOrUpdateLastMsg } = useChatLastMsg();
@@ -148,6 +151,7 @@ export const useChat = () => {
         },
       });
       const msgs = (await getRecords(response)) as ChatMsg[];
+
       setMsgs(chat.uid, msgs, true);
     } catch (error) {
       console.log("error", error);
@@ -186,6 +190,9 @@ export const useChat = () => {
           dataFormat: ProtocolDefinition.types.message.dataFormats[0],
           recipient: recipientDid,
           parentContextId: chatRecordId,
+          tags: {
+            msgType: CHAT_MSG_TYPES.TEXT,
+          },
         },
       });
 
@@ -259,6 +266,10 @@ export const useChat = () => {
           dataFormat: ProtocolDefinition.types.message.dataFormats[0],
           recipient: recipientDid,
           parentContextId: chatRecordId,
+          tags: {
+            msgType: CHAT_MSG_TYPES.ATTACHMENT,
+            attachmentType: attachment.type,
+          },
         },
       });
 
@@ -314,10 +325,55 @@ export const useChat = () => {
   };
 };
 
+export const useFilteredChatAttachmentMsgs = ({
+  chatUid,
+  type,
+}: ChatAttachmentMsgsFilterPayload) => {
+  const msgs = useAtomValue(
+    useMemo(
+      () => filterChatAttachmentMsgsAtom({ chatUid, type }),
+      [chatUid, type]
+    )
+  );
+
+  return { msgs };
+};
+
+export const useChatAttachments = () => {
+  const { web5, did } = useWeb5();
+  const setChatAttachmentMsgs = useSetAtom(setChatAttachmentMsgsAtom);
+
+  const fetchChatAttachments = async (chat: Chat) => {
+    try {
+      if (!web5 || !did) return;
+
+      const response = await web5.dwn.records.query({
+        message: {
+          filter: {
+            protocol: ProtocolDefinition.protocol,
+            protocolPath: "chat/message",
+            parentId: chat.recordId,
+            tags: {
+              msgType: CHAT_MSG_TYPES.ATTACHMENT,
+            },
+          },
+        },
+      });
+      const attachmentMsgs = await getRecords(response);
+
+      setChatAttachmentMsgs(chat.uid, attachmentMsgs);
+    } catch (error) {
+      console.log("error", error);
+    }
+  };
+
+  return { fetchChatAttachments };
+};
+
 export const useChatLastMsg = () => {
   const { web5, did } = useWeb5();
   const [chats] = useAtom(chatsAtom);
-  const setChatLastMsg = useSetAtom(updateChatLastMsgAtom);
+  const setChatLastMsg = useSetAtom(setChatLastMsgAtom);
 
   const createOrUpdateLastMsg = async (
     payload: CreateOrUpdateLastMsgPayload
@@ -380,8 +436,8 @@ export const useAttachment = ({
   const { web5 } = useWeb5();
   const [loading, setLoading] = useState(true);
   const [url, setUrl] = useState("");
-  const chatAttachments = useAtomValue(attachmentsAtom);
-  const setChatsAttachments = useSetAtom(updateAttachmentsAtom);
+  const attachments = useAtomValue(attachmentsAtom);
+  const setAttachments = useSetAtom(setAttachmentsAtom);
   const [status, setStatus] = useState<AttachmentDisplayStatus>("LOADING");
 
   const processBlob = async (recordId: string, blob: Blob) => {
@@ -403,9 +459,7 @@ export const useAttachment = ({
       return;
     }
 
-    const foundAttachment = chatAttachments.find(
-      (a) => a.recordId === recordId
-    );
+    const foundAttachment = attachments.find((a) => a.recordId === recordId);
 
     if (foundAttachment) {
       processBlob(recordId, foundAttachment.blob);
@@ -435,7 +489,7 @@ export const useAttachment = ({
       if (!response.record) return;
       const data = await response.record.data.blob();
       processBlob(attachment.recordId, data);
-      setChatsAttachments({ ...attachment, blob: data });
+      setAttachments({ ...attachment, blob: data });
     } catch (error) {
       console.log("error", error);
     }
@@ -459,7 +513,7 @@ export const useMsgText = (msg: ChatMsg, isReply: boolean = false): string => {
 export const useChatsLastMsgPolling = () => {
   const { web5 } = useWeb5();
   const [chats] = useAtom(chatsAtom);
-  const setChatLastMsg = useSetAtom(updateChatLastMsgAtom);
+  const setChatLastMsg = useSetAtom(setChatLastMsgAtom);
   const intervalRef = useRef<NodeJS.Timeout>();
 
   useEffect(() => {

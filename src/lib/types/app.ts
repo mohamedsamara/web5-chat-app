@@ -38,6 +38,13 @@ export type CreateOrUpdateLastMsgPayload = {
   recipientDid: string;
 };
 
+export type ChatAttachmentMsgsFilterType = "MEDIA" | "AUDIO" | "FILE";
+
+export type ChatAttachmentMsgsFilterPayload = {
+  chatUid: string;
+  type: ChatAttachmentMsgsFilterType;
+};
+
 /* RECORDS */
 export type Profile = {
   recordId: string;
@@ -102,10 +109,7 @@ export type ReplyScroll = {
   uid: string;
 };
 
-export type AttachmentViewerParams = {
-  caption: string;
-  attachment: Attachment;
-};
+export type AttachmentViewerParams = ChatMsg;
 
 export type AttachmentViewer = {
   visible: boolean;
@@ -121,5 +125,7 @@ export type AttachmentMimeType =
   | "image/jpeg"
   | "image/webp"
   | "video/mp4"
+  | "audio/webm"
+  | "audio/mp4"
   | "application/json"
   | "text/plain";

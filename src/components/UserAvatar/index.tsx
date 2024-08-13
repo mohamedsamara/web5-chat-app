@@ -1,4 +1,4 @@
-import { getAvatarUrl } from "@/lib/utils";
+import { cn, getAvatarUrl } from "lib/utils";
 import {
   Avatar as AvatarUI,
   AvatarFallback,
@@ -8,17 +8,34 @@ import {
 type Props = {
   src: string;
   alias?: string;
+  size?: "3xl" | "2xl" | "xl" | "lg" | "md" | "sm";
 };
 
-const UserAvatar = ({ src, alias }: Props) => {
+const Size = {
+  "3xl": "w-16 h-16",
+  "2xl": "w-14 h-14",
+  xl: "w-12 h-12",
+  lg: "w-10 h-10",
+  md: "w-8 h-8",
+  sm: "w-6 h-6",
+};
+
+const UserAvatar = ({ src, alias, size = "md" }: Props) => {
+  const s = Size[size];
+
   return (
-    <AvatarUI className="relative flex items-center justify-center w-8 h-8">
+    <AvatarUI className={cn("relative flex items-center justify-center", s)}>
       <AvatarImage
-        className="w-8 h-8 aspect-1"
+        className={cn("aspect-1", s)}
         src={getAvatarUrl(src) ?? ""}
         draggable={false}
       />
-      <AvatarFallback className="aspect-1 w-8 h-8 text-base text-center inline-flex items-center pl-px justify-center">
+      <AvatarFallback
+        className={cn(
+          "aspect-1 text-base text-center inline-flex items-center pl-px justify-center",
+          s
+        )}
+      >
         {alias ? (alias.length > 0 && alias?.[0].toUpperCase()) ?? "?" : "?"}
       </AvatarFallback>
     </AvatarUI>

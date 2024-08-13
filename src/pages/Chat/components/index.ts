@@ -4,6 +4,7 @@ import Msgs from "./Msgs";
 import EmptyChat from "./EmptyChat";
 import ReplyContent from "./ReplyContent";
 import AttachmentViewer from "./AttachmentViewer";
+import AttachementContent from "./AttachementContent";
 
 export {
   ChatHeader,
@@ -12,4 +13,5 @@ export {
   EmptyChat,
   ReplyContent,
   AttachmentViewer,
+  AttachementContent,
 };

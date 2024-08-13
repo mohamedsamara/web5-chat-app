@@ -1,12 +1,18 @@
+import { format } from "date-fns";
+
 import { useAttachmentViewer } from "lib/hooks";
 import Modal from "components/Modal";
-import AttachementContent from "./AttachementContent";
+import UserAvatar from "components/UserAvatar";
 import MsgText from "./MsgText";
+import AttachementContent from "./AttachementContent";
 
 const AttachmentViewer = () => {
   const { attachmentViewer, closeViewer } = useAttachmentViewer();
   if (!attachmentViewer.visible || !attachmentViewer.params?.attachment)
     return null;
+
+  const { attachment, sender, text, createdAt } = attachmentViewer.params;
+  const msgTime = format(createdAt, "PPPPp");
 
   return (
     <Modal
@@ -15,21 +21,21 @@ const AttachmentViewer = () => {
         closeViewer();
       }}
     >
-      <div className="max-w-md px-10">
-        <AttachementContent
-          className="rounded-md aspect-auto max-h-[calc(100vh-350px)]"
-          caption={attachmentViewer.params.caption}
-          attachment={attachmentViewer.params.attachment}
-          autoPlay
-        />
-        <div className="py-8">
-          <div className="max-h-[170px] max-w-2xl overflow-x-hidden overflow-y-auto no-scrollbar">
-            {attachmentViewer.params.caption && (
-              <MsgText
-                className="text-white"
-                text={attachmentViewer.params.caption}
-              />
-            )}
+      <AttachementContent
+        className="rounded-md aspect-auto"
+        caption={text}
+        attachment={attachment}
+        autoPlay
+      />
+      <div className="absolute bottom-0 right-0 left-0 flex flex-col gap-4 pb-8 pt-4 px-6 bg-black/50">
+        <div className="max-h-[90px] overflow-x-hidden overflow-y-auto no-scrollbar">
+          {text && <MsgText className="text-white" text={text} />}
+        </div>
+        <div className="flex gap-2 items-center">
+          <UserAvatar src={sender.avatar} alias={sender.name} />
+          <div>
+            <p className="text-xs font-normal text-gray-200">{sender.name}</p>
+            <p className="text-xs font-normal text-gray-400">Sent {msgTime}</p>
           </div>
         </div>
       </div>

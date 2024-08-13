@@ -14,7 +14,7 @@ const ChatItem = ({ chat }: { chat: Chat }) => {
       to={`${chat.uid}`}
       className={({ isActive }) =>
         [
-          "p-2 block mb-2",
+          "py-2 px-3 m-2 block rounded-md ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50",
           isActive ? "bg-muted hover:bg-muted" : "hover:bg-muted",
         ]
           .filter(Boolean)

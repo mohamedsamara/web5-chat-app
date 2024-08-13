@@ -6,7 +6,7 @@ type Props = {
 const RecordingTimer = ({ duration }: Props) => {
   const d = formatDuration(duration);
 
-  return <span>{d}</span>;
+  return <span className="text-gray-600 text-sm">{d}</span>;
 };
 
 export default RecordingTimer;

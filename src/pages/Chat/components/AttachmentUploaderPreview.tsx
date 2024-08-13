@@ -1,8 +1,8 @@
-import { Link } from "react-router-dom";
 import { CloudDownload } from "lucide-react";
 
 import { AttachmentMimeType } from "lib/types";
 import { getTypeOfAttachment } from "lib/utils";
+import { Link } from "components/Links";
 import FileSizeIndicator from "./FileSizeIndicator";
 import MimeIcon from "./MimeIcon";
 
@@ -31,7 +31,7 @@ const AttachmentUploaderPreview = ({ attachment }: { attachment: File }) => {
             <div className="flex items-center gap-1">
               <FileSizeIndicator size={attachment.size} />
               <Link
-                className="flex justify-center items-center relative rounded-full aspect-1 w-6 h-6"
+                className="flex justify-center items-center relative rounded-full aspect-1 w-6 h-6 "
                 to={url}
                 target="_blank"
                 download={fileName}

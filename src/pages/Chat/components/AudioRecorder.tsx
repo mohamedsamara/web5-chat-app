@@ -38,8 +38,6 @@ const AudioRecorder = ({ chat }: { chat: Chat }) => {
 
       if (!isAllowed) return;
 
-      console.log("recordingDuration", recordingDuration);
-
       setIsSubmitting(true);
 
       await createAttachmentMsg({

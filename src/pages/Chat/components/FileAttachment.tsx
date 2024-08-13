@@ -1,11 +1,10 @@
 import { useInView } from "react-intersection-observer";
+import { CloudDownload } from "lucide-react";
 
 import { Attachment } from "lib/types";
 import { useAttachment } from "lib/hooks";
 import { cn } from "lib/utils";
-
-import { Link } from "react-router-dom";
-import { CloudDownload } from "lucide-react";
+import { Link } from "components/Links";
 import FileSizeIndicator from "./FileSizeIndicator";
 import MimeIcon from "./MimeIcon";
 

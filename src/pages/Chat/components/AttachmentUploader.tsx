@@ -78,6 +78,7 @@ const AttachmentUploader = ({ chat }: { chat: Chat }) => {
 
   return (
     <Dialog
+      className="h-[calc(100vh-170px)]"
       title="Share attachments"
       open={modalOpen}
       onOpenChange={setModalOpen}
@@ -92,50 +93,48 @@ const AttachmentUploader = ({ chat }: { chat: Chat }) => {
         </Button>
       }
     >
-      <div className="flex flex-col h-[calc(100vh-170px)] lg:h-[calc(100vh-250px)]">
-        <div className="flex flex-col justify-center flex-1 mx-auto">
-          {attachment ? (
-            <div className="rounded-md max-w-screen-md max-h-96 overflow-hidden">
-              <AttachmentUploaderPreview attachment={attachment} />
-            </div>
-          ) : (
-            <Paperclip className="w-16 h-16" />
-          )}
-        </div>
+      <div className="flex flex-col justify-center flex-1 mx-auto">
+        {attachment ? (
+          <div className="rounded-md max-h-96 overflow-hidden">
+            <AttachmentUploaderPreview attachment={attachment} />
+          </div>
+        ) : (
+          <Paperclip className="w-16 h-16" />
+        )}
+      </div>
 
-        <div className="flex flex-col gap-10">
-          <Button onClick={onClick}>Choose attachment</Button>
-          <div className="flex gap-3">
-            <TextareaAutosize
-              className="self-center w-full p-2 px-3 py-2 transition-all border border-input bg-background rounded-md ring-offset-background resize-none placeholder:text-muted-foreground focus:outline-none focus:shadow-outline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 no-scrollbar"
-              placeholder="Add caption..."
-              maxRows={3}
-              onChange={onTextChange}
-              value={caption}
-            />
+      <div className="flex flex-col gap-10">
+        <Button onClick={onClick}>Choose attachment</Button>
+        <div className="flex gap-3">
+          <TextareaAutosize
+            className="self-center w-full p-2 px-3 py-2 transition-all border border-input bg-background rounded-md ring-offset-background resize-none placeholder:text-muted-foreground focus:outline-none focus:shadow-outline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 no-scrollbar"
+            placeholder="Add caption..."
+            maxRows={3}
+            onChange={onTextChange}
+            value={caption}
+          />
 
-            <div className="self-end py-2">
-              <Button
-                size="sm"
-                className="rounded-full aspect-1 p-0 w-8 h-8"
-                onClick={onCreateMsg}
-                disabled={isSubmitting || !attachment}
-              >
-                {isSubmitting ? <Loader /> : <Send className="h-4 w-4" />}
-              </Button>
-            </div>
+          <div className="self-end py-2">
+            <Button
+              size="sm"
+              className="rounded-full aspect-1 p-0 w-8 h-8"
+              onClick={onCreateMsg}
+              disabled={isSubmitting || !attachment}
+            >
+              {isSubmitting ? <Loader /> : <Send className="h-4 w-4" />}
+            </Button>
           </div>
         </div>
-
-        <input
-          type="file"
-          accept="image/*,video/*,text/plain,application/JSON"
-          // accept=".pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-          ref={hiddenFileInput}
-          onChange={_onChange}
-          style={{ display: "none" }}
-        />
       </div>
+
+      <input
+        type="file"
+        accept="image/*,video/*,text/plain,application/JSON"
+        // accept=".pdf,.doc,.docx,.xml,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+        ref={hiddenFileInput}
+        onChange={_onChange}
+        style={{ display: "none" }}
+      />
     </Dialog>
   );
 };

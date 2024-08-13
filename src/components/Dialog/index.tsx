@@ -1,5 +1,6 @@
 import { PropsWithChildren } from "react";
 
+import { cn } from "lib/utils";
 import {
   Dialog as RadixDialog,
   DialogClose,
@@ -11,7 +12,8 @@ import {
 import { CloseButton } from "../Buttons";
 
 type Props = PropsWithChildren & {
-  title: string;
+  className?: string;
+  title?: string;
   open: boolean;
   onOpenChange: (value: boolean) => void;
   onClose: () => void;
@@ -19,6 +21,7 @@ type Props = PropsWithChildren & {
 };
 
 const Dialog = ({
+  className,
   title,
   trigger,
   open,
@@ -29,7 +32,10 @@ const Dialog = ({
   return (
     <RadixDialog open={open} onOpenChange={onOpenChange}>
       <DialogTrigger asChild>{trigger}</DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]" hideClose>
+      <DialogContent
+        className={cn("flex flex-col sm:max-w-[425px]", className)}
+        hideClose
+      >
         <DialogHeader>
           <div className="flex justify-between items-center">
             <DialogTitle>{title}</DialogTitle>
@@ -38,7 +44,7 @@ const Dialog = ({
             </DialogClose>
           </div>
         </DialogHeader>
-        <div className="grid gap-4 py-4">{children}</div>
+        <div className="flex flex-col flex-1 gap-4 py-2 h-full">{children}</div>
       </DialogContent>
     </RadixDialog>
   );

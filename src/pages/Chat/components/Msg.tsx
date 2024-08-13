@@ -71,7 +71,7 @@ const Msg = ({ msg, isHighlighted, onReplyClick }: Props) => {
         {msg.reply && (
           <ReplyContent
             className="px-4 pt-4"
-            contentStyles="bg-slate-50 text-black rounded-tr-md rounded-br-md"
+            contentStyles="bg-slate-50 text-black rounded-tr-lg rounded-br-lg"
             msg={msg.reply}
             onClick={_onReplyClick}
             isReply
