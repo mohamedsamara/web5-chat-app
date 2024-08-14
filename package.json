@@ -23,7 +23,7 @@
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "^1.1.0",
     "@wavesurfer/react": "^1.0.7",
-    "@web5/api": "0.9.4",
+    "@web5/api": "0.10.0",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "date-fns": "^3.6.0",

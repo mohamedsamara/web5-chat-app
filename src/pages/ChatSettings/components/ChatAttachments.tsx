@@ -66,6 +66,11 @@ const MsgAttachment = ({
 }) => {
   const { msgs } = useFilteredChatAttachmentMsgs({ chatUid: chat.uid, type });
 
+  if (msgs.length === 0)
+    return (
+      <p className="text-gray-500 p-2">No {type.toLowerCase()} shared yet.</p>
+    );
+
   return (
     <div
       className={cn(

@@ -21,14 +21,14 @@ const ChatItem = ({ chat }: { chat: Chat }) => {
           .join(" ")
       }
     >
-      <div className="flex flex-row items-center gap-2">
+      <div className="flex flex-row gap-2">
         <div className="flex justify-start basis-8 overflow-hidden">
           <UserAvatar src={chat.avatar} alias={chat.name} />
         </div>
-        <div className="flex flex-col justify-center flex-1 min-w-0 overflow-hidden pl-1 gap-1">
+        <div className="flex flex-col flex-1 min-w-0 overflow-hidden pl-1 gap-1">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center">
-              <h4>{chat.name || "Dummy"}</h4>
+              <h4 className="text-gray-900 text-sm">{chat.name || "Dummy"}</h4>
             </div>
             {chat.lastMsg && (
               <span className="text-xs text-gray-500">{lastMsgSentAt}</span>
@@ -49,7 +49,7 @@ const LastMsgContent = ({ lastMsg }: { lastMsg: LastMsg }) => {
 
   return (
     <div className="flex items-center justify-between w-full">
-      <p className="truncate capitalize text-sm text-gray-500 max-w-[85%]">
+      <p className="truncate capitalize text-sm leading-4 text-gray-500 max-w-[85%]">
         {msgText}
       </p>
     </div>
