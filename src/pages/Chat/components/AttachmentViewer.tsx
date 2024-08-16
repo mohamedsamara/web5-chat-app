@@ -10,9 +10,9 @@ const AttachmentViewer = () => {
   const { attachmentViewer, closeViewer } = useAttachmentViewer();
   if (!attachmentViewer.visible || !attachmentViewer.params?.attachment)
     return null;
-
-  const { attachment, sender, text, createdAt } = attachmentViewer.params;
+  const { attachment, sender, text, createdAt, isMe } = attachmentViewer.params;
   const msgTime = format(createdAt, "PPPPp");
+  const name = isMe ? "You" : sender.name;
 
   return (
     <Modal
@@ -34,7 +34,7 @@ const AttachmentViewer = () => {
         <div className="flex gap-2 items-center">
           <UserAvatar src={sender.avatar} alias={sender.name} />
           <div>
-            <p className="text-xs font-normal text-gray-200">{sender.name}</p>
+            <p className="text-xs font-normal text-gray-200">{name}</p>
             <p className="text-xs font-normal text-gray-400">Sent {msgTime}</p>
           </div>
         </div>

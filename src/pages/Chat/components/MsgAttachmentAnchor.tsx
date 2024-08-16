@@ -3,11 +3,7 @@ import { Video } from "lucide-react";
 
 import { Attachment, ChatMsg } from "lib/types";
 import { cn } from "lib/utils";
-import {
-  useAttachmentViewer,
-  useIsAttachmentViewable,
-  useIsMsgSwiping,
-} from "lib/hooks";
+import { useAttachmentViewer, useIsAttachmentViewable } from "lib/hooks";
 import { BareButton } from "components/Buttons";
 
 type Props = PropsWithChildren & {
@@ -16,7 +12,6 @@ type Props = PropsWithChildren & {
 };
 
 const MsgAttachmentAnchor = ({ children, attachment, msg }: Props) => {
-  const { isMsgSwiping } = useIsMsgSwiping();
   const { openViewer } = useAttachmentViewer();
   const { isViewable } = useIsAttachmentViewable(attachment.type);
   const isVideo = attachment.type === "VIDEO";
@@ -31,7 +26,6 @@ const MsgAttachmentAnchor = ({ children, attachment, msg }: Props) => {
       <BareButton
         className="rounded-2xl overflow-hidden"
         onClick={() => {
-          if (isMsgSwiping) return;
           openViewer(msg);
         }}
       >

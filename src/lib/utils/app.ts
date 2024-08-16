@@ -19,8 +19,7 @@ export const handleError = (error: unknown) => {
 
 export const sendRecord = async (record: DWNRecord, dids: string[]) => {
   for (const did of dids) {
-    const { status } = await record.send(did);
-    console.log("status", status);
+    await record.send(did);
   }
 };
 

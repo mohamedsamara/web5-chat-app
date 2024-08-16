@@ -30,7 +30,6 @@ const AddMembers = ({
   const onAddMember = async () => {
     try {
       setIsSubmitting(true);
-      console.log("selectedMembers", selectedMembers);
       await addMember({ chat, members: selectedMembers });
       resetGroupMembersForm();
     } catch (error) {

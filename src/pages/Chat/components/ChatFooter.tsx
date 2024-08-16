@@ -18,7 +18,6 @@ const ChatFooter = ({ chat }: { chat: Chat }) => {
   const msgRef = useRef<HTMLTextAreaElement | null>(null);
   const [msg, setMsg] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
   const [reply, setReply] = useState<ChatMsg | null>(null);
   const location = useLocation();
 
@@ -69,6 +68,8 @@ const ChatFooter = ({ chat }: { chat: Chat }) => {
 
   const isSendBtnDisabled = msg.trim().length === 0 || isSubmitting;
 
+  const showAudioRecorder = !reply && msg.trim().length === 0;
+
   return (
     <>
       <Fade visible={reply ? true : false}>
@@ -99,9 +100,11 @@ const ChatFooter = ({ chat }: { chat: Chat }) => {
             {isSubmitting ? <Loader /> : <Send className="h-4 w-4" />}
           </Button>
         </div>
-        <div className="self-end py-2">
-          <AudioRecorder chat={chat} />
-        </div>
+        {showAudioRecorder && (
+          <div className="self-end py-2">
+            <AudioRecorder chat={chat} />
+          </div>
+        )}
       </div>
     </>
   );

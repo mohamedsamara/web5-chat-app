@@ -2,24 +2,21 @@ import { PropsWithChildren } from "react";
 
 import { cn } from "lib/utils";
 import UserAvatar from "components/UserAvatar";
-import ForwardIcon from "assets/forward.svg";
-import Fade from "components/Animations";
 
 type Props = PropsWithChildren & {
   className?: string;
   bubbleStyles?: string;
   noStyles: boolean;
-  showForward: boolean;
   end: boolean;
   showAvatar: boolean;
   showName: boolean;
   avatar: string;
   name: string;
   time: string;
+  actions: JSX.Element;
 };
 
 const ChatBubble = ({
-  showForward,
   className,
   bubbleStyles,
   noStyles = false,
@@ -30,26 +27,24 @@ const ChatBubble = ({
   name,
   time,
   children,
+  actions,
 }: Props) => {
   return (
     <div
       className={cn(
-        "flex items-start gap-2.5",
+        "flex items-start gap-2.5 group",
         end ? "justify-end pr-2" : "pl-2",
         className
       )}
     >
-      <Fade
-        className={cn("self-center", end ? "order-1" : "order-3")}
-        visible={showForward}
+      <div
+        className={cn(
+          "self-start fade-out group-hover:fade-in",
+          end ? "order-1 pr-4" : "order-3 pl-4"
+        )}
       >
-        <img
-          draggable={false}
-          src={ForwardIcon}
-          alt="Forward Icon"
-          className="w-6 h-6 select-none"
-        />
-      </Fade>
+        {actions}
+      </div>
 
       <div className={cn(end ? "order-3" : "order-1")}>
         <div className="w-8 h-8">
@@ -62,11 +57,6 @@ const ChatBubble = ({
           end ? "order-2" : "order-2"
         )}
       >
-        {showName && (
-          <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <span className="text-sm text-neutral-800 select-none">{name}</span>
-          </div>
-        )}
         <div
           className={cn(
             "border overflow-hidden",
@@ -79,9 +69,15 @@ const ChatBubble = ({
         >
           {children}
         </div>
-        <span className="text-xs font-normal text-gray-500 select-none">
-          {time}
-        </span>
+
+        <div className="flex items-center gap-2 pt-1 pl-2">
+          {showName && (
+            <span className="text-sm text-gray-500 select-none">{name}</span>
+          )}
+          <span className="text-xs font-normal text-gray-500 select-none">
+            {time}
+          </span>
+        </div>
       </div>
     </div>
   );

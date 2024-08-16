@@ -9,15 +9,10 @@ import {
 } from "react";
 import { useAtom } from "jotai";
 
-import {
-  replyScrollAtom,
-  isMsgSwipingAtom,
-  attachmentViewerAtom,
-} from "lib/stores";
+import { replyScrollAtom, attachmentViewerAtom } from "lib/stores";
 import {
   AttachmentViewerParams,
   MsgAttachmentType,
-  ChatMsg,
   ChatMember,
 } from "lib/types";
 
@@ -126,11 +121,6 @@ export const useReplyScrollSpy = () => {
   return { reply, scrollToMsg: onReplyClick };
 };
 
-export const useIsMsgSwiping = () => {
-  const [isMsgSwiping, setIsMsgSwiping] = useAtom(isMsgSwipingAtom);
-  return { isMsgSwiping, setIsMsgSwiping };
-};
-
 export const useAttachmentViewer = () => {
   const [attachmentViewer, setAttachmentViewer] = useAtom(attachmentViewerAtom);
 
@@ -150,12 +140,6 @@ export const useIsAttachmentViewable = (type: MsgAttachmentType) => {
 export const useIsPreviewAttachment = (type: MsgAttachmentType) => {
   const isPreview = type === "VIDEO";
   return { isPreview };
-};
-
-export const useIsSwipable = (msg: ChatMsg) => {
-  let isSwipeable = true;
-  if (msg.type === "ATTACHMENT" && !msg.attachment) isSwipeable = false;
-  return { isSwipeable };
 };
 
 type Handler = (event: MouseEvent) => void;
