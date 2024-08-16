@@ -1,4 +1,5 @@
 import ChatSettingsHeader from "./ChatSettingsHeader";
-import ChatAttachments from "./ChatAttachments";
+import ChatTabs from "./ChatTabs";
+import MemberItemDetails from "./MemberItemDetails";
 
-export { ChatSettingsHeader, ChatAttachments };
+export { ChatSettingsHeader, ChatTabs, MemberItemDetails };

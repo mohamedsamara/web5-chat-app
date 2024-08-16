@@ -24,7 +24,12 @@ const UserAvatar = ({ src, alias, size = "md" }: Props) => {
   const s = Size[size];
 
   return (
-    <AvatarUI className={cn("relative flex items-center justify-center", s)}>
+    <AvatarUI
+      className={cn(
+        "relative flex items-center justify-center border b-gray-400",
+        s
+      )}
+    >
       <AvatarImage
         className={cn("aspect-1", s)}
         src={getAvatarUrl(src) ?? ""}

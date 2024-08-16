@@ -18,7 +18,7 @@ import {
 } from "components/ui/form";
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: REQUIRED_FIELD }),
+  name: z.string().min(2, { message: REQUIRED_FIELD }),
 });
 
 const ProfileForm = ({ onDone }: { onDone?: () => void }) => {

@@ -6,6 +6,7 @@ import {
   ChatMsg,
   LastMsg,
   ChatAttachmentMsgsFilterPayload,
+  ChatMember,
 } from "lib/types";
 
 /* Chats */
@@ -29,6 +30,45 @@ export const setChatLastMsgAtom = atom(
 export const getChatAtom = (chatUid: string) => {
   return atom((get) => get(chatsAtom).find((c) => c.uid === chatUid) || null);
 };
+
+export const setChatDetailsAtom = atom(
+  null,
+  (_, set, chatUid: string, name: string, avatar: string) => {
+    set(chatsAtom, (prev) =>
+      prev.map((c) => {
+        if (c.uid === chatUid) {
+          return {
+            ...c,
+            name,
+            avatar,
+          };
+        }
+        return c;
+      })
+    );
+  }
+);
+
+export const removeChatAtom = atom(null, (_, set, chatUid: string) => {
+  set(chatsAtom, (prev) => prev.filter((c) => c.uid !== chatUid));
+});
+
+export const setChatMemberDidsAtom = atom(
+  null,
+  (_, set, chatUid: string, memberDids: string[]) => {
+    set(chatsAtom, (prev) =>
+      prev.map((c) => {
+        if (c.uid === chatUid) {
+          return {
+            ...c,
+            memberDids,
+          };
+        }
+        return c;
+      })
+    );
+  }
+);
 
 /* Msgs */
 export const msgsAtom = atom<{ [key in string]: ChatMsg[] }>({});
@@ -98,6 +138,53 @@ export const setChatAttachmentMsgsAtom = atom(
         return { ...prev, [chatUid]: msgs };
       }
       return { ...prev, [chatUid]: msgs };
+    });
+  }
+);
+
+/* Chat Members */
+export const chatMembersAtom = atom<{ [key in string]: ChatMember[] }>({});
+
+export const getChatMembersAtom = (chatUid: string) => {
+  return atom((get) => get(chatMembersAtom)[chatUid] || []);
+};
+
+export const setChatMembersAtom = atom(
+  null,
+  (get, set, chatUid: string, members: ChatMember[]) => {
+    set(chatMembersAtom, (prev) => {
+      if (chatUid in get(chatMembersAtom)) {
+        return { ...prev, [chatUid]: members };
+      }
+      return { ...prev, [chatUid]: members };
+    });
+  }
+);
+
+export const removeChatMemberAtom = atom(
+  null,
+  (get, set, chatUid: string, memberDid: string) => {
+    set(chatMembersAtom, (prev) => {
+      if (chatUid in get(chatMembersAtom)) {
+        const newMembers = get(chatMembersAtom)[chatUid].filter(
+          (m) => m.did !== memberDid
+        );
+        return { ...prev, [chatUid]: newMembers };
+      }
+      return prev;
+    });
+  }
+);
+
+export const addChatMemberAtom = atom(
+  null,
+  (get, set, chatUid: string, members: ChatMember[]) => {
+    set(chatMembersAtom, (prev) => {
+      if (chatUid in get(chatMembersAtom)) {
+        const newMembers = [...get(chatMembersAtom)[chatUid], ...members];
+        return { ...prev, [chatUid]: newMembers };
+      }
+      return prev;
     });
   }
 );

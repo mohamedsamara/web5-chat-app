@@ -1,19 +1,24 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { useAtom, useSetAtom, useAtomValue } from "jotai";
-import { Record } from "@web5/api";
+import { Record as DWNRecord } from "@web5/api";
 
 import { useWeb5 } from "lib/contexts";
 import {
+  AddChatMemberPayload,
   Attachment,
   AttachmentDisplayStatus,
   Chat,
   ChatAttachmentMsgsFilterPayload,
+  ChatMember,
   ChatMsg,
   CreateAttachmentMsgPayload,
+  CreateGroupPayload,
   CreateMsgPayload,
   CreateOrUpdateLastMsgPayload,
   LastMsg,
+  RemoveChatMemberPayload,
+  UpdateChatPayload,
 } from "lib/types";
 import ProtocolDefinition from "lib/protocols/protocol.json";
 import { CHAT_MSG_TYPES, CHAT_TYPES } from "lib/constants";
@@ -29,16 +34,26 @@ import {
   setMsgsAtom,
   setChatAttachmentMsgsAtom,
   filterChatAttachmentMsgsAtom,
+  getChatMembersAtom,
+  setChatMembersAtom,
+  chatMembersAtom,
+  removeChatMemberAtom,
+  addChatMemberAtom,
+  setChatDetailsAtom,
+  setChatMemberDidsAtom,
+  removeChatAtom,
 } from "lib/stores";
 import {
   blobToBase64,
   fetchChatLastMsg,
-  getConversationRecipientDid,
+  fetchProfile,
+  getMemberDids,
   getRecords,
   handleError,
   processChat,
   processChats,
   processMsgs,
+  sendRecord,
   updateRecord,
 } from "lib/utils";
 import { useProfile } from "./profile";
@@ -68,6 +83,8 @@ export const useChat = () => {
   const [chatsFetched, setChatsFetched] = useAtom(chatsFetchedAtom);
   const setMsgs = useSetAtom(setMsgsAtom);
   const [msgsFetched, setMsgsFetched] = useAtom(msgsFetchedAtom);
+  const setChatDetails = useSetAtom(setChatDetailsAtom);
+  const removeChat = useSetAtom(removeChatAtom);
 
   const { createOrUpdateLastMsg } = useChatLastMsg();
 
@@ -86,7 +103,6 @@ export const useChat = () => {
           type: CHAT_TYPES.CONVERSATION,
           memberDids: [did, recipientDid],
           ownerDid: did,
-          lastMsg: null,
           createdAt: new Date().getTime(),
           updatedAt: new Date().getTime(),
         },
@@ -102,6 +118,46 @@ export const useChat = () => {
       if (!record) return;
 
       await record.send(recipientDid);
+
+      const data = await record.data.json();
+      const chat = { ...data, recordId: record.id };
+
+      const processedChat = await processChat(web5, did, chat, profile);
+      setChats([processedChat, ...chats]);
+    } catch (error) {
+      const msg = handleError(error);
+      console.log("msg", msg);
+    }
+  };
+
+  const createGroup = async (payload: CreateGroupPayload) => {
+    try {
+      if (!web5 || !did) return;
+
+      const { memberDids, name, avatar } = payload;
+
+      const { record } = await web5.dwn.records.create({
+        data: {
+          uid: uuidv4(),
+          name,
+          avatar,
+          type: CHAT_TYPES.GROUP,
+          memberDids: [did, ...memberDids],
+          ownerDid: did,
+          createdAt: new Date().getTime(),
+          updatedAt: new Date().getTime(),
+        },
+        message: {
+          protocol: ProtocolDefinition.protocol,
+          protocolPath: "chat",
+          schema: ProtocolDefinition.types.chat.schema,
+          dataFormat: ProtocolDefinition.types.chat.dataFormats[0],
+        },
+      });
+
+      if (!record) return;
+
+      await sendRecord(record, memberDids);
 
       const data = await record.data.json();
       const chat = { ...data, recordId: record.id };
@@ -165,8 +221,7 @@ export const useChat = () => {
       if (!web5 || !did) return;
       const { chat, replyUid, text } = payload;
 
-      /* Default to one-to-one conversation. */
-      const recipientDid = getConversationRecipientDid(chat, did);
+      const memberDids = getMemberDids(chat, did);
       const chatRecordId = chat.recordId;
 
       const { record } = await web5.dwn.records.create({
@@ -188,7 +243,7 @@ export const useChat = () => {
           protocolPath: "chat/message",
           schema: ProtocolDefinition.types.message.schema,
           dataFormat: ProtocolDefinition.types.message.dataFormats[0],
-          recipient: recipientDid,
+          // recipient: recipientDid,
           parentContextId: chatRecordId,
           tags: {
             msgType: CHAT_MSG_TYPES.TEXT,
@@ -198,14 +253,15 @@ export const useChat = () => {
 
       if (!record) return;
 
+      await sendRecord(record, memberDids);
+
       const msgRecordId = record.id;
       const msg = await record.data.json();
-      await record.send(recipientDid);
 
       await createOrUpdateLastMsg({
         chatRecordId,
         msgRecordId,
-        recipientDid,
+        memberDids,
       });
 
       setMsgs(chat.uid, [{ ...msg, recordId: msgRecordId }]);
@@ -220,8 +276,7 @@ export const useChat = () => {
 
       const { chat, replyUid, text, blob, attachment } = payload;
 
-      /* Default to one-to-one conversation. */
-      const recipientDid = getConversationRecipientDid(chat, did);
+      const memberDids = getMemberDids(chat, did);
       const chatRecordId = chat.recordId;
 
       /* create attachment record */
@@ -232,7 +287,7 @@ export const useChat = () => {
           protocolPath: "chat/attachment",
           schema: ProtocolDefinition.types.attachment.schema,
           dataFormat: attachment.mimeType,
-          recipient: recipientDid,
+          // recipient: recipientDid,
           parentContextId: chatRecordId,
         },
       });
@@ -264,7 +319,7 @@ export const useChat = () => {
           protocolPath: "chat/message",
           schema: ProtocolDefinition.types.message.schema,
           dataFormat: ProtocolDefinition.types.message.dataFormats[0],
-          recipient: recipientDid,
+          // recipient: recipientDid,
           parentContextId: chatRecordId,
           tags: {
             msgType: CHAT_MSG_TYPES.ATTACHMENT,
@@ -276,14 +331,15 @@ export const useChat = () => {
       if (!msgRecord) return;
       const msgRecordId = msgRecord.id;
 
-      await msgRecord.send(recipientDid);
-      await attachmentRecord.send(recipientDid);
+      await sendRecord(msgRecord, memberDids);
+      await sendRecord(attachmentRecord, memberDids);
+
       const msg = await msgRecord.data.json();
 
       await createOrUpdateLastMsg({
         chatRecordId,
         msgRecordId,
-        recipientDid,
+        memberDids,
       });
 
       setMsgs(chat.uid, [{ ...msg, recordId: msgRecordId }]);
@@ -313,15 +369,55 @@ export const useChat = () => {
     }
   };
 
+  const deleteChat = async (chat: Chat) => {
+    try {
+      if (!web5 || !did) return [];
+      const { record } = await web5.dwn.records.read({
+        message: {
+          filter: {
+            recordId: chat.recordId,
+          },
+        },
+      });
+
+      await record.delete({ prune: true });
+      removeChat(chat.uid);
+    } catch (error) {
+      console.log("Failed to delete chat", error);
+    }
+  };
+
+  const updateChat = async (payload: UpdateChatPayload) => {
+    try {
+      if (!web5 || !did) return [];
+      const { chat, name, avatar } = payload;
+
+      const memberDids = getMemberDids(chat, did);
+
+      const record = await updateRecord(web5, chat.recordId, {
+        name,
+        avatar,
+      });
+
+      await sendRecord(record, memberDids);
+      setChatDetails(chat.uid, name, avatar);
+    } catch (error) {
+      console.log("Failed to update chat", error);
+    }
+  };
+
   return {
     chats,
     chatsFetched,
     msgsFetched,
     createConversation,
+    createGroup,
     fetchChats,
     fetchChatMsgs,
     createMsg,
     createAttachmentMsg,
+    deleteChat,
+    updateChat,
   };
 };
 
@@ -381,11 +477,11 @@ export const useChatLastMsg = () => {
     try {
       if (!web5 || !did) return;
 
-      const { chatRecordId, msgRecordId, recipientDid } = payload;
+      const { chatRecordId, msgRecordId, memberDids } = payload;
       const chat = chats.find((c) => c.recordId === chatRecordId);
       if (!chat) return;
 
-      let record: Record;
+      let record: DWNRecord;
 
       if (chat.lastMsg) {
         const lastMsgRecordId = chat.lastMsg.recordId;
@@ -402,7 +498,7 @@ export const useChatLastMsg = () => {
             protocolPath: "chat/lastMsg",
             schema: ProtocolDefinition.types.lastMsg.schema,
             dataFormat: ProtocolDefinition.types.lastMsg.dataFormats[0],
-            recipient: recipientDid,
+            // recipient: recipientDid,
             parentContextId: chatRecordId,
           },
         });
@@ -410,7 +506,7 @@ export const useChatLastMsg = () => {
         record = response.record;
       }
 
-      await record.send(recipientDid);
+      await sendRecord(record, memberDids);
 
       const lastMsg = await fetchChatLastMsg(web5, chat.recordId);
       if (!lastMsg) return;
@@ -527,9 +623,12 @@ export const useChatsLastMsgPolling = () => {
   const lastMsgPolling = async () => {
     try {
       if (!web5) return;
+
       for (const chat of chats) {
         const lastMsg = await fetchChatLastMsg(web5, chat.recordId);
+
         if (!lastMsg) return;
+
         gotUpdates(chat.recordId, lastMsg);
       }
     } catch (error) {
@@ -545,5 +644,176 @@ export const useChatsLastMsgPolling = () => {
     if (chat.lastMsg?.msg.recordId === lastMsg.msg.recordId) return;
 
     setChatLastMsg(chat.recordId, lastMsg);
+  };
+};
+
+export const useContacts = () => {
+  const { profile } = useProfile();
+  const [chats] = useAtom(chatsAtom);
+
+  const members = chats
+    .filter((c) => c.type === "CONVERSATION")
+    .map((c) => {
+      if (!c.members) return [];
+      return c.members.filter((m) => m.uid !== profile.uid);
+    })
+    .flat();
+
+  const memberIds = members.map(({ uid }) => uid);
+  const uniqueMembers = members.filter(
+    ({ uid }, index) => !memberIds.includes(uid, index + 1)
+  );
+
+  return { contacts: uniqueMembers };
+};
+
+export const useGroupContacts = (members: ChatMember[]) => {
+  const { contacts } = useContacts();
+  const membersMap = new Map();
+  for (const member of members) {
+    membersMap.set(member.did, member);
+  }
+
+  const filteredContacts = contacts.filter((m) => {
+    if (membersMap.has(m.did)) return;
+    return m;
+  });
+
+  return {
+    contacts: filteredContacts,
+    existingContacts: [...filteredContacts, ...members],
+  };
+};
+
+export const useChatMembers = (chat: Chat) => {
+  const { web5, did } = useWeb5();
+  const { profile } = useProfile();
+  const { contacts } = useContacts();
+  const [loading, setLoading] = useState(false);
+  const [chats] = useAtom(chatsAtom);
+  const [chatMembers] = useAtom(chatMembersAtom);
+  const setChatMembers = useSetAtom(setChatMembersAtom);
+  const removeChatMember = useSetAtom(removeChatMemberAtom);
+  const addChatMember = useSetAtom(addChatMemberAtom);
+  const setChatMemberDids = useSetAtom(setChatMemberDidsAtom);
+  const members = useAtomValue(
+    useMemo(() => getChatMembersAtom(chat.uid), [chat.uid, chatMembers.length])
+  );
+
+  const getMembers = async () => {
+    try {
+      setLoading(true);
+      if (chatMembers[chat.uid]) {
+        setLoading(false);
+        return;
+      }
+      await getAllChatMembers();
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getAllChatMembers = async () => {
+    if (!web5 || !did) return;
+
+    const members: ChatMember[] = [profile];
+
+    const memberDids = getMemberDids(chat, did);
+
+    for (const memberDid of memberDids) {
+      const foundMember = contacts.find((c) => c.did === memberDid);
+      const memberInChat = isMemberInChatMembers(memberDid);
+
+      if (foundMember) {
+        members.push(foundMember);
+      } else if (memberInChat) {
+        members.push(memberInChat);
+      } else {
+        console.log(
+          "memberDid cant be found anywhere? --- attempt to get member",
+          memberDid
+        );
+
+        const member = await fetchProfile(web5, memberDid);
+        if (member) members.push(member);
+      }
+    }
+
+    setChatMembers(chat.uid, members);
+  };
+
+  const isMemberInChatMembers = (memberDid: string) => {
+    let member: ChatMember | null = null;
+    chats.map((c) => {
+      if (!chatMembers[c.uid]) return;
+      const foundInChats = chatMembers[c.uid].find((m) => m.did === memberDid);
+
+      if (foundInChats) member = foundInChats;
+    });
+
+    return member;
+  };
+
+  const removeMember = async (payload: RemoveChatMemberPayload) => {
+    try {
+      if (!web5 || !did) return [];
+      const { chat, memberDid } = payload;
+
+      const memberDids = chat.memberDids;
+      const newMemberDids = memberDids.filter((m) => m !== memberDid);
+      const withoutMe = memberDids.filter((d) => d !== did);
+
+      const record = await updateRecord(web5, chat.recordId, {
+        memberDids: newMemberDids,
+      });
+
+      await sendRecord(record, withoutMe);
+      removeChatMember(chat.uid, memberDid);
+      setChatMemberDids(chat.uid, newMemberDids);
+    } catch (error) {
+      console.log("Failed to update chat", error);
+    }
+  };
+
+  const addMember = async (payload: AddChatMemberPayload) => {
+    try {
+      if (!web5 || !did) return [];
+      const { chat, members } = payload;
+      const memberDids = chat.memberDids;
+
+      const newMemberDids = [...memberDids, ...members.map((m) => m.did)];
+      const withoutMe = newMemberDids.filter((d) => d !== did);
+
+      const record = await updateRecord(web5, chat.recordId, {
+        memberDids: newMemberDids,
+      });
+
+      await sendRecord(record, withoutMe);
+      addChatMember(chat.uid, members);
+      setChatMemberDids(chat.uid, newMemberDids);
+    } catch (error) {
+      console.log("Failed to update chat", error);
+    }
+  };
+
+  const sortedMembers = useMemo(
+    () =>
+      members.sort((a, b) => {
+        const owner =
+          a.did === chat.ownerDid ? -1 : b.did === chat.ownerDid ? 1 : 0;
+        const me = a.did === profile.did ? -1 : b.did === profile.did ? 1 : 0;
+        return owner || me;
+      }),
+    [members, chat.ownerDid, profile.did]
+  );
+
+  return {
+    loading,
+    members: sortedMembers,
+    getMembers,
+    removeMember,
+    addMember,
   };
 };

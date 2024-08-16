@@ -15,10 +15,14 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "components/ui/tabs";
 import { BareButton } from "components/Buttons";
 import { AttachementContent } from "@/pages/Chat/components";
+import ChatMembers from "./ChatMembers";
 
-type Props = { chat: Chat };
+type Props = {
+  chat: Chat;
+  canEdit: boolean;
+};
 
-const ChatAttachments = ({ chat }: Props) => {
+const ChatTabs = ({ chat, canEdit }: Props) => {
   const { fetchChatAttachments } = useChatAttachments();
   const { openViewer } = useAttachmentViewer();
 
@@ -27,40 +31,45 @@ const ChatAttachments = ({ chat }: Props) => {
   }, []);
 
   return (
-    <div className="w-full max-w-md mx-auto">
-      <Tabs defaultValue="media" className="w-full text-center">
-        <TabsList className="w-full">
-          <TabsTrigger className="w-full" value="media">
-            Media
-          </TabsTrigger>
-          <TabsTrigger className="w-full" value="files">
-            Files
-          </TabsTrigger>
-          <TabsTrigger className="w-full" value="voice">
-            Voice
-          </TabsTrigger>
-        </TabsList>
-        <TabsContent value="media" className="">
-          <MsgAttachment chat={chat} type="MEDIA" openViewer={openViewer} />
-        </TabsContent>
-        <TabsContent value="files">
-          <MsgAttachment chat={chat} type="FILE" />
-        </TabsContent>
-        <TabsContent value="voice">
-          <MsgAttachment chat={chat} type="AUDIO" />
-        </TabsContent>
-      </Tabs>
-    </div>
+    <Tabs defaultValue="media" className="w-full text-center">
+      <TabsList className="w-full">
+        <TabsTrigger className="w-full" value="media">
+          Media
+        </TabsTrigger>
+        <TabsTrigger className="w-full" value="files">
+          Files
+        </TabsTrigger>
+        <TabsTrigger className="w-full" value="voice">
+          Voice
+        </TabsTrigger>
+        <TabsTrigger className="w-full" value="members">
+          Members
+        </TabsTrigger>
+      </TabsList>
+      <TabsContent value="media" className="">
+        <MsgAttachment chat={chat} type="MEDIA" openViewer={openViewer} />
+      </TabsContent>
+      <TabsContent value="files">
+        <MsgAttachment chat={chat} type="FILE" />
+      </TabsContent>
+      <TabsContent value="voice">
+        <MsgAttachment chat={chat} type="AUDIO" />
+      </TabsContent>
+      <TabsContent value="members">
+        <ChatMembers chat={chat} canEdit={canEdit} />
+      </TabsContent>
+    </Tabs>
   );
 };
 
-export default ChatAttachments;
+export default ChatTabs;
 
 const MsgAttachment = ({
   chat,
   type,
   openViewer,
-}: Props & {
+}: {
+  chat: Chat;
   type: ChatAttachmentMsgsFilterType;
   openViewer?: (params: AttachmentViewerParams) => void;
 }) => {

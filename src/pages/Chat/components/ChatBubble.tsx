@@ -64,9 +64,7 @@ const ChatBubble = ({
       >
         {showName && (
           <div className="flex items-center space-x-2 rtl:space-x-reverse">
-            <span className="text-sm font-semibold text-neutral-700 select-none">
-              {name}
-            </span>
+            <span className="text-sm text-neutral-800 select-none">{name}</span>
           </div>
         )}
         <div

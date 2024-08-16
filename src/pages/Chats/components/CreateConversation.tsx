@@ -1,8 +1,6 @@
-import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { PencilIcon } from "lucide-react";
 
 import { useChat } from "lib/hooks";
 import { REQUIRED_FIELD } from "lib/validations";
@@ -23,12 +21,13 @@ const formSchema = z.object({
   did: z.string().min(1, { message: REQUIRED_FIELD }),
 });
 
-type ButtonType = "full" | "icon";
+type Props = {
+  open: boolean;
+  onOpenChange: (value: boolean) => void;
+  onClose: () => void;
+};
 
-const CreateConversation = ({ btnType = "icon" }: { btnType?: ButtonType }) => {
-  const [modalOpen, setModalOpen] = useState(false);
-  const onModalOpen = () => setModalOpen(true);
-  const onModalClose = () => setModalOpen(false);
+const CreateConversation = ({ open, onOpenChange, onClose }: Props) => {
   const { createConversation } = useChat();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -46,30 +45,16 @@ const CreateConversation = ({ btnType = "icon" }: { btnType?: ButtonType }) => {
     } catch (error) {
       console.log("error", error);
     } finally {
-      onModalClose();
+      onClose();
     }
   };
 
   return (
     <Dialog
       title="New Private Conversation"
-      open={modalOpen}
-      onOpenChange={setModalOpen}
-      onClose={onModalClose}
-      trigger={
-        btnType === "icon" ? (
-          <Button
-            size="icon"
-            variant="ghost"
-            className="relative rounded-full aspect-1 p-0 w-8 h-8"
-            onClick={onModalOpen}
-          >
-            <PencilIcon className="w-4 h-4" />
-          </Button>
-        ) : (
-          <Button onClick={onModalOpen}>Start Chatting</Button>
-        )
-      }
+      open={open}
+      onOpenChange={onOpenChange}
+      onClose={onClose}
     >
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">

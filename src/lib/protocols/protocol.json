@@ -43,7 +43,7 @@
         {
           "who": "author",
           "of": "chat",
-          "can": ["read"]
+          "can": ["read", "create", "update", "delete"]
         },
         {
           "who": "recipient",

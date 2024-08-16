@@ -14,7 +14,12 @@ import {
   isMsgSwipingAtom,
   attachmentViewerAtom,
 } from "lib/stores";
-import { AttachmentViewerParams, MsgAttachmentType, ChatMsg } from "lib/types";
+import {
+  AttachmentViewerParams,
+  MsgAttachmentType,
+  ChatMsg,
+  ChatMember,
+} from "lib/types";
 
 type CopyStatus = "inactive" | "copied" | "failed";
 export const useCopyToClipboard = (
@@ -197,4 +202,48 @@ export const useDimension = <T extends HTMLElement = HTMLElement>(
   }, [ref]);
 
   return dimensions;
+};
+
+export type GroupDetailsFormValues = {
+  photo: File | null;
+  name: string;
+};
+
+export const useGroupDetailsForm = (initialState?: GroupDetailsFormValues) => {
+  const [groupDetails, setGroupDetails] = useState<GroupDetailsFormValues>({
+    name: initialState?.name || "",
+    photo: null,
+  });
+
+  const onNameChange = (value: string) => {
+    setGroupDetails({ ...groupDetails, name: value });
+  };
+
+  const onPhotoChange = (photo: File) => {
+    setGroupDetails({ ...groupDetails, photo });
+  };
+
+  const resetGroupDetailsForm = () => {
+    setGroupDetails({ name: "", photo: null });
+  };
+
+  return { groupDetails, onPhotoChange, onNameChange, resetGroupDetailsForm };
+};
+
+export const useGroupMembersForm = () => {
+  const [selectedMembers, setSelectedMembers] = useState<ChatMember[]>([]);
+
+  const onMemberSelectChange = (isSelected: boolean, member: ChatMember) => {
+    if (isSelected) {
+      setSelectedMembers([...selectedMembers, member]);
+    } else {
+      setSelectedMembers(selectedMembers.filter((m) => m.uid !== member.uid));
+    }
+  };
+
+  const resetGroupMembersForm = () => {
+    setSelectedMembers([]);
+  };
+
+  return { selectedMembers, resetGroupMembersForm, onMemberSelectChange };
 };

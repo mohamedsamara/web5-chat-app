@@ -1,4 +1,4 @@
-import { RecordsQueryResponse, Web5 } from "@web5/api";
+import { Record as DWNRecord, RecordsQueryResponse, Web5 } from "@web5/api";
 import {
   Chat,
   ChatMember,
@@ -17,11 +17,19 @@ export const handleError = (error: unknown) => {
   return message;
 };
 
+export const sendRecord = async (record: DWNRecord, dids: string[]) => {
+  for (const did of dids) {
+    const { status } = await record.send(did);
+    console.log("status", status);
+  }
+};
+
 export const updateRecord = async (
   web5: Web5,
   recordId: string,
   data: Record<string, unknown>,
-  published: boolean = false
+  published: boolean = false,
+  tags?: Record<string, string>
 ) => {
   try {
     const { record } = await web5.dwn.records.read({
@@ -42,6 +50,7 @@ export const updateRecord = async (
     await record.update({
       data: updatedData,
       published,
+      tags,
     });
 
     return record;
@@ -176,11 +185,12 @@ export const processChat = async (
   chat: Chat,
   profile: Profile
 ) => {
+  const lastMsg = await fetchChatLastMsg(web5, chat.recordId);
+
   /* CONVERSATION chat photo will be the contact photo */
   if (chat.type === "CONVERSATION") {
     const recipientDid = getConversationRecipientDid(chat, did);
-    const contact = await fetchChatMember(web5, recipientDid);
-    const lastMsg = await fetchChatLastMsg(web5, chat.recordId);
+    const contact = await fetchProfile(web5, recipientDid);
 
     if (contact) {
       return {
@@ -192,10 +202,10 @@ export const processChat = async (
       };
     }
 
-    // TODO: include lastMsg when implementing groups
-    return chat;
+    return { ...chat, lastMsg };
   }
-  return chat;
+
+  return { ...chat, lastMsg };
 };
 
 export const processChats = async (
@@ -204,15 +214,16 @@ export const processChats = async (
   chats: Chat[],
   profile: Profile
 ) => {
+  const filteredChats = chats.filter((c) => c.memberDids.includes(did));
   const processedChats = await Promise.all(
-    chats.map(async (chat) => {
+    filteredChats.map(async (chat) => {
       return await processChat(web5, did, chat, profile);
     })
   );
   return processedChats;
 };
 
-export const fetchChatMember = async (web5: Web5, did: string) => {
+export const fetchProfile = async (web5: Web5, did: string) => {
   try {
     if (!web5) return null;
 
@@ -234,21 +245,27 @@ export const fetchChatMember = async (web5: Web5, did: string) => {
 
     return { ...profile, recordId: response.record.id } as Profile;
   } catch (error) {
-    throw new Error("Failed to fetch profile");
+    return null;
+    // throw new Error("Failed to fetch profile");
   }
 };
 
 export const getChatMembers = async (web5: Web5, dids: string[]) => {
   const members: ChatMember[] = [];
   for (const did of dids) {
-    const member = await fetchChatMember(web5, did);
+    const member = await fetchProfile(web5, did);
     if (member) members.push(member);
   }
   return members;
 };
 
-export const getConversationRecipientDid = (chat: Chat, did: string) => {
+export const getMemberDids = (chat: Chat, did: string) => {
   const theirDids = chat.memberDids.filter((d) => d !== did);
+  return theirDids;
+};
+
+export const getConversationRecipientDid = (chat: Chat, did: string) => {
+  const theirDids = getMemberDids(chat, did);
   const recipientDid = theirDids[0];
   return recipientDid;
 };

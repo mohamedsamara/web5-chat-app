@@ -2,7 +2,6 @@ import { useEffect } from "react";
 
 import { useChat, useChatsLastMsgPolling } from "lib/hooks";
 import SpinnerOverlay from "components/SpinnerOverlay";
-import CreateConversation from "./CreateConversation";
 import ChatItem from "./ChatItem";
 
 const ChatList = () => {
@@ -29,7 +28,9 @@ const ChatList = () => {
         </nav>
       ) : (
         <div className="flex h-full justify-center items-center">
-          <CreateConversation btnType="full" />
+          <p className="text-sm text-gray-600">
+            Start a conversation or group chat
+          </p>
         </div>
       )}
     </>

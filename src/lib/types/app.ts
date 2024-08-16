@@ -15,6 +15,28 @@ export type ProfilePayload = {
   name: string;
 };
 
+export type CreateGroupPayload = {
+  name: string;
+  avatar: string;
+  memberDids: string[];
+};
+
+export type UpdateChatPayload = {
+  chat: Chat;
+  name: string;
+  avatar: string;
+};
+
+export type RemoveChatMemberPayload = {
+  chat: Chat;
+  memberDid: string;
+};
+
+export type AddChatMemberPayload = {
+  chat: Chat;
+  members: ChatMember[];
+};
+
 export type CreateMsgPayload = {
   chat: Chat;
   text: string;
@@ -35,7 +57,7 @@ export type CreateAttachmentMsgPayload = CreateMsgPayload & {
 export type CreateOrUpdateLastMsgPayload = {
   chatRecordId: string;
   msgRecordId: string;
-  recipientDid: string;
+  memberDids: string[];
 };
 
 export type ChatAttachmentMsgsFilterType = "MEDIA" | "AUDIO" | "FILE";

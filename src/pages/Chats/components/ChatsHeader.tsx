@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { PencilIcon } from "lucide-react";
 
 import { useWeb5 } from "lib/contexts";
 import { useProfile } from "lib/hooks";
@@ -11,12 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
-
 import { CopyButton } from "components/Buttons";
 import UserAvatar from "components/UserAvatar";
 import Dialog from "components/Dialog";
-import CreateConversation from "./CreateConversation";
 import { ProfileForm, UploadAvatar } from "pages/Profile/components";
+import CreateGroup from "./CreateGroup";
+import CreateConversation from "./CreateConversation";
 
 const ChatsHeader = () => {
   const { profile, profileCreated } = useProfile();
@@ -24,6 +25,14 @@ const ChatsHeader = () => {
   const [profileModalOpen, setProfileModal] = useState(false);
   const onProfileModalOpen = () => setProfileModal(true);
   const onProfileModalClose = () => setProfileModal(false);
+
+  const [conversationModalOpen, setConversationModal] = useState(false);
+  const onConversationModalOpen = () => setConversationModal(true);
+  const onConversationModalClose = () => setConversationModal(false);
+
+  const [groupModalOpen, setGroupModal] = useState(false);
+  const onGroupModalOpen = () => setGroupModal(true);
+  const onGroupModalClose = () => setGroupModal(false);
 
   return (
     <>
@@ -39,16 +48,13 @@ const ChatsHeader = () => {
                 <UserAvatar src={profile.avatar} alias={profile.name} />
               </Button>
             </DropdownMenuTrigger>
-
             <DropdownMenuContent className="w-64" align="end" forceMount>
               <DropdownMenuLabel className="font-normal">
                 <div className="flex items-center justify-center gap-4">
                   <div className="truncate flex-1 text-gray-600">
                     <span>{did}</span>
                   </div>
-                  <div className="w-10">
-                    <CopyButton value={did || ""} />
-                  </div>
+                  <CopyButton value={did || ""} />
                 </div>
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
@@ -58,8 +64,26 @@ const ChatsHeader = () => {
             </DropdownMenuContent>
           </DropdownMenu>
         </div>
-        {/* Create Conversation */}
-        <CreateConversation />
+        {/* Create Conversation/Group */}
+        <DropdownMenu modal={false}>
+          <DropdownMenuTrigger asChild>
+            <Button
+              size="icon"
+              variant="ghost"
+              className="relative rounded-full aspect-1 p-0 w-8 h-8"
+            >
+              <PencilIcon className="w-4 h-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-64" align="end" forceMount>
+            <DropdownMenuItem onClick={onConversationModalOpen}>
+              New Private Conversation
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onGroupModalOpen}>
+              New Group Chat
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </header>
 
       {/* Profile Form Modal */}
@@ -72,6 +96,20 @@ const ChatsHeader = () => {
         <UploadAvatar />
         <ProfileForm onDone={onProfileModalClose} />
       </Dialog>
+
+      {/* Conversation Modal */}
+      <CreateConversation
+        open={conversationModalOpen}
+        onOpenChange={setConversationModal}
+        onClose={onConversationModalClose}
+      />
+
+      {/* Group Modal */}
+      <CreateGroup
+        open={groupModalOpen}
+        onOpenChange={setGroupModal}
+        onClose={onGroupModalClose}
+      />
     </>
   );
 };
