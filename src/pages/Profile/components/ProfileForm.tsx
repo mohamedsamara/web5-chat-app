@@ -59,7 +59,7 @@ const ProfileForm = ({ onDone }: { onDone?: () => void }) => {
               <FormItem>
                 <FormLabel>Name</FormLabel>
                 <FormControl>
-                  <Input placeholder="John Doe" {...field} />
+                  <Input placeholder="Type your name..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>

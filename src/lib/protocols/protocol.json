@@ -73,7 +73,7 @@
         "$actions": [
           {
             "who": "anyone",
-            "can": ["create", "update"]
+            "can": ["create", "update", "co-update"]
           },
           {
             "who": "author",
@@ -83,7 +83,7 @@
           {
             "who": "recipient",
             "of": "chat/lastMsg",
-            "can": ["read", "co-update"]
+            "can": ["read"]
           }
         ]
       },

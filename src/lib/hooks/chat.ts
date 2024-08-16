@@ -92,7 +92,7 @@ export const useChat = () => {
     try {
       if (!web5 || !did) return;
 
-      const isPresent = await isChatPresent(recipientDid);
+      const isPresent = await isConversationPresent(recipientDid);
       if (isPresent) return;
 
       const { record } = await web5.dwn.records.create({
@@ -112,6 +112,9 @@ export const useChat = () => {
           schema: ProtocolDefinition.types.chat.schema,
           dataFormat: ProtocolDefinition.types.chat.dataFormats[0],
           recipient: recipientDid,
+          tags: {
+            type: CHAT_TYPES.CONVERSATION,
+          },
         },
       });
 
@@ -152,6 +155,9 @@ export const useChat = () => {
           protocolPath: "chat",
           schema: ProtocolDefinition.types.chat.schema,
           dataFormat: ProtocolDefinition.types.chat.dataFormats[0],
+          tags: {
+            type: CHAT_TYPES.GROUP,
+          },
         },
       });
 
@@ -348,7 +354,7 @@ export const useChat = () => {
     }
   };
 
-  const isChatPresent = async (recipientDid: string) => {
+  const isConversationPresent = async (recipientDid: string) => {
     try {
       if (!web5) return;
 
@@ -358,6 +364,9 @@ export const useChat = () => {
           filter: {
             protocol: ProtocolDefinition.protocol,
             schema: ProtocolDefinition.types.chat.schema,
+            tags: {
+              type: CHAT_TYPES.CONVERSATION,
+            },
           },
         },
       });
@@ -498,17 +507,17 @@ export const useChatLastMsg = () => {
             protocolPath: "chat/lastMsg",
             schema: ProtocolDefinition.types.lastMsg.schema,
             dataFormat: ProtocolDefinition.types.lastMsg.dataFormats[0],
-            // recipient: recipientDid,
             parentContextId: chatRecordId,
           },
         });
+
         if (!response.record) return;
         record = response.record;
       }
 
       await sendRecord(record, memberDids);
-
       const lastMsg = await fetchChatLastMsg(web5, chat.recordId);
+
       if (!lastMsg) return;
 
       setChatLastMsg(chatRecordId, lastMsg);

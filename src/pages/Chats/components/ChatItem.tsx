@@ -28,14 +28,22 @@ const ChatItem = ({ chat }: { chat: Chat }) => {
         <div className="flex flex-col flex-1 min-w-0 overflow-hidden pl-1 gap-1">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center">
-              <h4 className="text-gray-900 text-sm">{chat.name || "Dummy"}</h4>
+              <h4 className="text-gray-900 text-sm leading-4">
+                {chat.name || "Dummy"}
+              </h4>
             </div>
             {chat.lastMsg && (
               <span className="text-xs text-gray-500">{lastMsgSentAt}</span>
             )}
           </div>
           {/* Last msg */}
-          {lastMsg && <LastMsgContent lastMsg={lastMsg} />}
+          {lastMsg ? (
+            <LastMsgContent lastMsg={lastMsg} />
+          ) : (
+            <p className="truncate capitalize text-xs leading-4 text-gray-500 max-w-[85%]">
+              Start chatting!
+            </p>
+          )}
         </div>
       </div>
     </NavLink>
@@ -49,7 +57,7 @@ const LastMsgContent = ({ lastMsg }: { lastMsg: LastMsg }) => {
 
   return (
     <div className="flex items-center justify-between w-full">
-      <p className="truncate capitalize text-sm leading-4 text-gray-500 max-w-[85%]">
+      <p className="truncate capitalize text-xs leading-4 text-gray-500 max-w-[85%]">
         {msgText}
       </p>
     </div>
