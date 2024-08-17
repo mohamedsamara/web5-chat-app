@@ -2,9 +2,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useProfile } from "lib/hooks";
 
 const PublicRoute = () => {
-  const { profileCreated } = useProfile();
+  const { profileReady } = useProfile();
 
-  if (profileCreated) return <Navigate to="/" replace />;
+  if (profileReady) return <Navigate to="/" replace />;
 
   return <Outlet />;
 };

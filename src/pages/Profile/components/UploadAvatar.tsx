@@ -19,10 +19,8 @@ const UploadAvatar = ({ onDone }: { onDone?: () => void }) => {
     try {
       setIsSubmitting(true);
       const photo = event.target?.files?.[0] as File;
-
       const base64 = await fileToBase64(photo);
       await uploadAvatar(base64);
-
       event.target.value = "";
     } catch (error) {
       console.log("error", error);

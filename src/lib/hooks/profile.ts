@@ -8,6 +8,7 @@ import { ChatMember, Profile, ProfilePayload } from "lib/types";
 
 import {
   profileAtom,
+  profileReadyAtom,
   profileCreatedAtom,
   profileFetchedAtom,
 } from "lib/stores";
@@ -18,6 +19,7 @@ export const useProfile = () => {
   const { web5, did } = useWeb5();
   const [profile, setProfile] = useAtom(profileAtom);
   const [profileFetched, setProfileFetched] = useAtom(profileFetchedAtom);
+  const [profileReady] = useAtom(profileReadyAtom);
   const [profileCreated] = useAtom(profileCreatedAtom);
 
   const fetchProfile = async () => {
@@ -79,6 +81,8 @@ export const useProfile = () => {
 
       if (!response.record) return;
 
+      console.log("create profile", response);
+
       const data = await response.record.data.json();
       setProfile({ ...profile, ...data, recordId: response.record.id });
     } catch (error) {
@@ -106,6 +110,7 @@ export const useProfile = () => {
 
   return {
     profile,
+    profileReady,
     profileCreated,
     profileFetched,
     fetchProfile,

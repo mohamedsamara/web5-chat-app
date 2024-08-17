@@ -740,11 +740,6 @@ export const useChatMembers = (chat: Chat) => {
       } else if (memberInChat) {
         members.push(memberInChat);
       } else {
-        console.log(
-          "memberDid cant be found anywhere? --- attempt to get member",
-          memberDid
-        );
-
         const member = await fetchProfile(web5, memberDid);
         if (member) members.push(member);
       }

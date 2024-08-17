@@ -2,9 +2,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useProfile } from "lib/hooks";
 
 const ProtectedRoute = () => {
-  const { profileCreated } = useProfile();
+  const { profileReady } = useProfile();
 
-  if (!profileCreated) return <Navigate to="/create-profile" replace />;
+  if (!profileReady) return <Navigate to="/create-profile" replace />;
 
   return <Outlet />;
 };

@@ -21,6 +21,11 @@ export const profileAtom = atom(
 
 export const profileCreatedAtom = atom((get) => {
   const profile = get(profileAtom);
+  return !!profile.recordId;
+});
+
+export const profileReadyAtom = atom((get) => {
+  const profile = get(profileAtom);
   return profile.recordId && profile.avatar ? true : false;
 });
 

@@ -40,7 +40,7 @@ const ChatBubble = ({
       <div
         className={cn(
           "self-start fade-out group-hover:fade-in",
-          end ? "order-1 pr-4" : "order-3 pl-4"
+          end ? "order-1 pr-2" : "order-3 pl-2"
         )}
       >
         {actions}

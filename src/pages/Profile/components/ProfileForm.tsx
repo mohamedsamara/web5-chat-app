@@ -22,8 +22,13 @@ const formSchema = z.object({
 });
 
 const ProfileForm = ({ onDone }: { onDone?: () => void }) => {
-  const { profile, createProfile, updateProfile, profileCreated } =
-    useProfile();
+  const {
+    profile,
+    createProfile,
+    updateProfile,
+    profileCreated,
+    profileReady,
+  } = useProfile();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -33,6 +38,7 @@ const ProfileForm = ({ onDone }: { onDone?: () => void }) => {
   });
 
   const { isValid, isDirty, isSubmitting } = form.formState;
+  const isDirtyEnabled = profileReady && !isDirty;
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     try {
@@ -65,7 +71,10 @@ const ProfileForm = ({ onDone }: { onDone?: () => void }) => {
               </FormItem>
             )}
           />
-          <Button type="submit" disabled={!isValid || !isDirty || isSubmitting}>
+          <Button
+            type="submit"
+            disabled={!isValid || isSubmitting || isDirtyEnabled}
+          >
             {isSubmitting && <Loader className="mr-1" />}
             {profileCreated ? "Save" : "Create"}
           </Button>
