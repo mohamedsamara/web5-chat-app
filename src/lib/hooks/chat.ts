@@ -45,6 +45,7 @@ import {
 } from "lib/stores";
 import {
   blobToBase64,
+  capitalize,
   fetchChatLastMsg,
   fetchProfile,
   getMemberDids,
@@ -608,7 +609,8 @@ export const useMsgText = (msg: ChatMsg, isReply: boolean = false): string => {
     const text =
       msg.text || isReply
         ? msg.text
-        : msg.attachment?.type.toLowerCase() + " Attachment" || "";
+        : capitalize(msg.attachment?.type.toLowerCase() || "") +
+            " Attachment" || "";
     return text;
   }, [msg]);
 

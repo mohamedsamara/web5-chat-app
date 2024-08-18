@@ -57,7 +57,7 @@ const LastMsgContent = ({ lastMsg }: { lastMsg: LastMsg }) => {
 
   return (
     <div className="flex items-center justify-between w-full">
-      <p className="truncate capitalize text-xs leading-4 text-gray-500 max-w-[85%]">
+      <p className="truncate text-xs leading-4 text-gray-500 max-w-[85%]">
         {msgText}
       </p>
     </div>

@@ -1,4 +1,6 @@
 import { Record as DWNRecord, RecordsQueryResponse, Web5 } from "@web5/api";
+import * as linkify from "linkifyjs";
+
 import {
   Chat,
   ChatMember,
@@ -279,4 +281,43 @@ export const getTypeOfAttachment = (mimeType: string) => {
   if (mimeType.includes("audio/")) type = "audio";
 
   return CHAT_MSG_ATTACHMENT_TYPES[type.toUpperCase() as MsgAttachmentType];
+};
+
+export const isLink = (text: string) => linkify.find(text, "url").length > 0;
+export const extractLink = (text: string) => linkify.find(text, "url")[0].href;
+
+export const isValidLink = (str: string) => {
+  const res = str.match(
+    /(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_+.~#?&//=]*)/g
+  );
+  return res !== null;
+};
+
+export const segregateMsgText = (text: string) => {
+  const words = text.split(" ");
+  const content = [];
+
+  let link = "";
+  let isValid = false;
+
+  for (const word of words) {
+    const isLinkPresent = isLink(word);
+
+    if (isLinkPresent && isValidLink(word)) {
+      isValid = true;
+      link = isLinkPresent ? extractLink(word) : "";
+
+      content.push({
+        isLink: true,
+        text: word,
+      });
+    } else {
+      content.push({
+        isLink: false,
+        text: word,
+      });
+    }
+  }
+
+  return { content, link, isValidLink: isValid };
 };

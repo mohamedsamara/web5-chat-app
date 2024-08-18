@@ -18,7 +18,9 @@ const MsgAttachmentAnchor = ({ children, attachment, msg }: Props) => {
 
   if (!isViewable)
     return (
-      <div className={cn("px-4", msg.text ? "pt-3" : "py-2")}>{children}</div>
+      <div className={cn("px-[0.6rem]", msg.text ? "pt-3" : "py-2")}>
+        {children}
+      </div>
     );
 
   return (

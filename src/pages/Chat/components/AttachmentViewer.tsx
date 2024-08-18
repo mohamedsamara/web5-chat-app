@@ -29,7 +29,7 @@ const AttachmentViewer = () => {
       />
       <div className="absolute bottom-0 right-0 left-0 flex flex-col gap-4 pb-8 pt-4 px-6 bg-black/50">
         <div className="max-h-[90px] overflow-x-hidden overflow-y-auto no-scrollbar">
-          {text && <MsgText className="text-white" text={text} />}
+          {text && <MsgText className="text-white" text={text} linkHidden />}
         </div>
         <div className="flex gap-2 items-center">
           <UserAvatar src={sender.avatar} alias={sender.name} />

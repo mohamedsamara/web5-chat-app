@@ -149,3 +149,5 @@ export const isSafari = () => {
 export const getAudioMimeType = (mimeType: string) => {
   return mimeType.substring(0, mimeType.indexOf(";"));
 };
+
+export const capitalize = (str: string) => str[0].toUpperCase() + str.slice(1);

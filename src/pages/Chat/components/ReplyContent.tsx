@@ -60,7 +60,7 @@ const ReplyContentType = ({
 
   switch (msg.type) {
     case "TEXT":
-      return <MsgText className="truncate" text={msg.text} />;
+      return <MsgText className="truncate" text={msg.text} linkHidden />;
     case "ATTACHMENT":
       if (!msg.attachment) return <></>;
       return (
@@ -76,7 +76,7 @@ const ReplyContentType = ({
           />
           {msgText && (
             <div className="flex-1 min-w-0">
-              <MsgText className="truncate capitalize" text={msgText} />
+              <MsgText className="truncate" text={msgText} linkHidden />
             </div>
           )}
         </div>

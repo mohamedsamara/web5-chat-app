@@ -104,3 +104,13 @@
     transition: opacity 250ms ease-out, visibility 0ms ease-out 250ms;
   }
 }
+
+/* start microlink override styles */
+.msg-link .microlink_card {
+  @apply rounded-md;
+}
+
+.msg-link .microlink_card__iframe iframe {
+  @apply rounded-md w-full h-[200px] min-h-[200px] max-h-[300px] bg-slate-900;
+}
+/* end microlink override styles */
