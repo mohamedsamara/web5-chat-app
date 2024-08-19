@@ -4,6 +4,7 @@ import { format } from "date-fns";
 import { Chat, LastMsg } from "lib/types";
 import { useMsgText } from "lib/hooks";
 import UserAvatar from "components/UserAvatar";
+import ChatName from "./ChatName";
 
 const ChatItem = ({ chat }: { chat: Chat }) => {
   const { lastMsg } = chat;
@@ -28,19 +29,17 @@ const ChatItem = ({ chat }: { chat: Chat }) => {
         <div className="flex flex-col flex-1 min-w-0 overflow-hidden pl-1 gap-1">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center">
-              <h4 className="text-gray-900 text-sm leading-4">
-                {chat.name || "Dummy"}
-              </h4>
+              <ChatName name={chat.name} />
             </div>
             {chat.lastMsg && (
-              <span className="text-xs text-gray-500">{lastMsgSentAt}</span>
+              <span className="text-xs text-slate-400">{lastMsgSentAt}</span>
             )}
           </div>
           {/* Last msg */}
           {lastMsg ? (
             <LastMsgContent lastMsg={lastMsg} />
           ) : (
-            <p className="truncate capitalize text-xs leading-4 text-gray-500 max-w-[85%]">
+            <p className="truncate capitalize text-xs leading-4 text-slate-500 max-w-[85%]">
               Start chatting!
             </p>
           )}
@@ -57,7 +56,7 @@ const LastMsgContent = ({ lastMsg }: { lastMsg: LastMsg }) => {
 
   return (
     <div className="flex items-center justify-between w-full">
-      <p className="truncate text-xs leading-4 text-gray-500 max-w-[85%]">
+      <p className="truncate text-xs leading-4 text-slate-500 max-w-[85%]">
         {msgText}
       </p>
     </div>

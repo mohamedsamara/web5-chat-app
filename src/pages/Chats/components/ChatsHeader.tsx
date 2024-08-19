@@ -36,7 +36,7 @@ const ChatsHeader = () => {
 
   return (
     <>
-      <header className="flex justify-between items-center px-3 border-b border-b-gray-100 h-12">
+      <header className="flex justify-between items-center px-3 border-b border-b-slate-100 h-12">
         <div className="flex-1">
           <DropdownMenu modal={false}>
             <DropdownMenuTrigger asChild>

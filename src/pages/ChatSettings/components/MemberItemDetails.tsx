@@ -37,7 +37,7 @@ const MemberItemDetails = ({ member }: Props) => {
       </div>
       <div className="flex justify-start items-center flex-1 gap-1">
         <span className="text-md">{member.name}</span>{" "}
-        {isMe && <span className="text-gray-500 text-sm">You</span>}
+        {isMe && <span className="text-slate-500 text-sm">You</span>}
       </div>
     </div>
   );

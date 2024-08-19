@@ -27,7 +27,7 @@ const AudioAttachment = ({ className, attachment, isPreview }: Props) => {
     return (
       <div
         ref={ref}
-        className="flex items-center gap-1 text-gray-700 text-sm select-none max-w-28"
+        className="flex items-center gap-1 text-slate-700 text-sm select-none max-w-28"
       >
         <RecordingTimer duration={attachment.duration || 0} />
       </div>

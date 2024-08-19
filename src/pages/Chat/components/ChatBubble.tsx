@@ -61,7 +61,7 @@ const ChatBubble = ({
           className={cn(
             "border overflow-hidden",
             end
-              ? "rounded-s-3xl rounded-ee-3xl bg-muted border-gray-200"
+              ? "rounded-s-3xl rounded-ee-3xl bg-muted border-slate-200"
               : "rounded-e-3xl rounded-es-3xl bg-white text-black border-blue-50",
             noStyles ? "rounded-3xl" : "",
             bubbleStyles
@@ -72,9 +72,9 @@ const ChatBubble = ({
 
         <div className="flex items-center gap-2 pt-1 pl-2">
           {showName && (
-            <span className="text-sm text-gray-500 select-none">{name}</span>
+            <span className="text-sm text-slate-500 select-none">{name}</span>
           )}
-          <span className="text-xs font-normal text-gray-500 select-none">
+          <span className="text-xs font-normal text-slate-500 select-none">
             {time}
           </span>
         </div>

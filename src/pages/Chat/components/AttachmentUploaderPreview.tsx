@@ -22,7 +22,7 @@ const AttachmentUploaderPreview = ({ attachment }: { attachment: File }) => {
       );
     case "FILE":
       return (
-        <div className="flex items-center justify-center gap-2 border border-gray-200 py-2 px-4 rounded-md text-gray-700 text-sm max-w-[225px] min-w-[145px]">
+        <div className="flex items-center justify-center gap-2 border border-gray-200 py-2 px-4 rounded-md text-slate-700 text-sm max-w-[225px] min-w-[145px]">
           <div className="base-12">
             <MimeIcon mimeType={attachment.type as AttachmentMimeType} />
           </div>

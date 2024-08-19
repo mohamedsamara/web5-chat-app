@@ -1,5 +1,5 @@
 import { useInView } from "react-intersection-observer";
-import { CloudDownload } from "lucide-react";
+import { Download } from "lucide-react";
 
 import { Attachment } from "lib/types";
 import { useAttachment } from "lib/hooks";
@@ -7,6 +7,7 @@ import { cn } from "lib/utils";
 import { Link } from "components/Links";
 import FileSizeIndicator from "./FileSizeIndicator";
 import MimeIcon from "./MimeIcon";
+import FileName from "./FileName";
 
 type Props = {
   className?: string;
@@ -31,24 +32,21 @@ const FileAttachment = ({ className, isPreview, attachment }: Props) => {
     return (
       <div
         ref={ref}
-        className="flex items-center gap-1 text-gray-700 text-sm select-none max-w-28"
+        className="flex items-center gap-1 text-sm select-none max-w-28"
       >
         <MimeIcon mimeType={attachment.mimeType} />
-        <p className="truncate">{fileName}</p>
+        <FileName fileName={fileName} className="truncate" />
       </div>
     );
 
   return (
     <div
       ref={ref}
-      className={cn(
-        "flex items-center gap-2 text-gray-700 text-sm select-none",
-        className
-      )}
+      className={cn("flex items-center gap-2 text-sm select-none", className)}
     >
       <MimeIcon mimeType={attachment.mimeType} />
       <div className="flex flex-col">
-        <span>{fileName}</span>
+        <FileName fileName={fileName} />
         <div className="flex items-center gap-1">
           <FileSizeIndicator size={attachment.size} />
           <Link
@@ -57,7 +55,7 @@ const FileAttachment = ({ className, isPreview, attachment }: Props) => {
             target="_blank"
             download={fileName}
           >
-            <CloudDownload className="w-4 h-4" />
+            <Download className="w-4 h-4 text-slate-600" />
           </Link>
         </div>
       </div>

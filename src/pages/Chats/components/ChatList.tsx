@@ -28,7 +28,7 @@ const ChatList = () => {
         </nav>
       ) : (
         <div className="flex h-full justify-center items-center">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-slate-600">
             Start a conversation or group chat
           </p>
         </div>

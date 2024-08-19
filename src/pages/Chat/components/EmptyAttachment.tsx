@@ -9,7 +9,10 @@ const EmptyAttachment = ({
 }) => {
   return (
     <p
-      className={cn("text-xs font-normal text-gray-500 select-none", className)}
+      className={cn(
+        "text-xs font-normal text-slate-500 select-none",
+        className
+      )}
     >
       {text}
     </p>

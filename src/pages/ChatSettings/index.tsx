@@ -23,7 +23,7 @@ const ChatSettings = () => {
 
   return (
     <div className="relative flex flex-col h-full overflow-hidden">
-      <div className="flex justify-between items-center px-3 border-b border-b-gray-100 h-12">
+      <div className="flex justify-between items-center px-3 border-b border-b-slate-100 h-12">
         <Link className="flex items-center gap-1" to={`/chats/${chat.uid}`}>
           <ChevronLeft className="h-4 w-4" />
           <span>Back</span>

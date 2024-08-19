@@ -33,7 +33,7 @@ const MemberItem = ({ member, canEdit, chat }: Props) => {
   };
 
   return (
-    <div className="flex flex-row items-center justify-between w-full px-2 py-3 bg-transparent border-b hover:bg-gray-50 border-b-gray-200">
+    <div className="flex flex-row items-center justify-between w-full px-2 py-3 bg-transparent border-b hover:bg-slate-50 border-b-slate-200">
       <MemberItemDetails member={member} />
       {canEdit && !isMe && (
         <Button

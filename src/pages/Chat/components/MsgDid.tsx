@@ -18,7 +18,7 @@ const MsgDid = ({
     return (
       <div className="flex items-center gap-1 max-w-full">
         <QrCode className="w-4 h-4 text-indigo-500" />
-        <span className="truncate text-gray-600">{did + " "} </span>
+        <DidText did={did} />
       </div>
     );
   return (
@@ -30,7 +30,7 @@ const MsgDid = ({
         >
           <div className="flex items-center gap-1 max-w-full">
             <QrCode className="w-6 h-6 text-indigo-500" />
-            <span className="truncate text-gray-600">{did + " "} </span>
+            <DidText did={did} />
           </div>
         </Button>
       </DropdownMenuTrigger>
@@ -42,3 +42,7 @@ const MsgDid = ({
 };
 
 export default MsgDid;
+
+const DidText = ({ did }: { did: string }) => (
+  <span className="truncate">{did + " "} </span>
+);

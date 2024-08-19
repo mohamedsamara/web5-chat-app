@@ -56,7 +56,7 @@ const GroupMembersForm = ({
 
         {contacts.length > 0 && (
           <div>
-            <p className="mb-2 text-gray-600">People</p>
+            <p className="mb-2 text-slate-600">People</p>
             {contacts.map((member, idx) => (
               <MemberItem
                 key={idx}
@@ -70,7 +70,7 @@ const GroupMembersForm = ({
 
         {profile && (
           <div>
-            <p className="mb-2 text-gray-600">More People</p>
+            <p className="mb-2 text-slate-600">More People</p>
             <MemberItem
               member={profile}
               onMemberSelectChange={onMemberSelectChange}
@@ -95,7 +95,7 @@ const MemberItem = ({
   selectedMembers: ChatMember[];
 }) => {
   return (
-    <div className="flex flex-row items-center w-full px-2 py-3 bg-transparent border-b hover:bg-gray-50 border-b-gray-200">
+    <div className="flex flex-row items-center w-full px-2 py-3 bg-transparent border-b hover:bg-slate-50 border-b-slate-200">
       <div className="flex-1">
         <label
           htmlFor={`checkbox-${member.uid}`}

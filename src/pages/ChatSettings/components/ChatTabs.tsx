@@ -77,7 +77,7 @@ const MsgAttachment = ({
 
   if (msgs.length === 0)
     return (
-      <p className="text-gray-500 p-2">No {type.toLowerCase()} shared yet.</p>
+      <p className="text-slate-500 p-2">No {type.toLowerCase()} shared yet.</p>
     );
 
   return (
@@ -113,13 +113,13 @@ const MsgAttachment = ({
         return (
           <div
             key={idx}
-            className={cn("border-b border-b-gray-100 flex flex-col py-6")}
+            className={cn("border-b border-b-slate-100 flex flex-col py-6")}
           >
             <AttachementContent
               caption={msg.text}
               attachment={msg.attachment}
             />
-            <p className="text-xs font-normal text-gray-500 text-left mt-3">
+            <p className="text-xs font-normal text-slate-500 text-left mt-3">
               Sent {msgTime}
             </p>
           </div>

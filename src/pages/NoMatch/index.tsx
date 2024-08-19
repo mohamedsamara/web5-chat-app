@@ -9,7 +9,7 @@ const NoMatch = () => {
     <div className="flex justify-center items-center h-full">
       <div className="text-center space-y-6">
         <h4 className="font-bold text-xl">Page not found</h4>
-        <p className="text-gray-600">
+        <p className="text-slate-600">
           Sorry, we could not find the page you are looking for.
         </p>
         <Button color="secondary" onClick={() => navigate("/chats")}>

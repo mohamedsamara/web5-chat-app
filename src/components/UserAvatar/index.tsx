@@ -26,7 +26,7 @@ const UserAvatar = ({ src, alias, size = "md" }: Props) => {
   return (
     <AvatarUI
       className={cn(
-        "relative flex items-center justify-center border b-gray-400",
+        "relative flex items-center justify-center border b-slate-400",
         s
       )}
     >

@@ -36,8 +36,8 @@ const AttachmentViewer = () => {
         <div className="flex gap-2 items-center">
           <UserAvatar src={sender.avatar} alias={sender.name} />
           <div>
-            <p className="text-xs font-normal text-gray-200">{name}</p>
-            <p className="text-xs font-normal text-gray-400">Sent {msgTime}</p>
+            <p className="text-xs font-normal text-slate-200">{name}</p>
+            <p className="text-xs font-normal text-slate-400">Sent {msgTime}</p>
           </div>
         </div>
       </div>

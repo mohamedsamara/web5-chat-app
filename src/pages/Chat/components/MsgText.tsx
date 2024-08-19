@@ -16,7 +16,10 @@ const MsgText = ({ text, className, isShortPreview = false }: Props) => {
     <>
       {showLink && <MsgLink link={link} />}
       <div
-        className={cn("text-sm font-normal select-none break-words", className)}
+        className={cn(
+          "text-sm font-normal select-none break-words text-slate-700",
+          className
+        )}
       >
         {content.map((m, idx) =>
           m.isLink ? (

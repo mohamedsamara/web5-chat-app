@@ -19,7 +19,7 @@ const DidDetails = ({
         viewBox={`0 0 256 256`}
       />
       <div className="flex items-center justify-center gap-4">
-        <div className="truncate flex-1 text-gray-600">
+        <div className="truncate flex-1 text-slate-500">
           <span>{did}</span>
         </div>
         <CopyButton value={did || ""} />

@@ -13,7 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
-import { GroupDetailsForm } from "pages/Chats/components";
+import { ChatName, GroupDetailsForm } from "pages/Chats/components";
 import Dialog from "components/Dialog";
 
 const ChatSettingsHeader = ({
@@ -74,7 +74,7 @@ const ChatSettingsHeader = ({
         <div />
         <div className="flex flex-col items-center gap-2">
           <UserAvatar size="3xl" src={chat.avatar} alias={chat.name} />
-          <h4 className="text-center">{chat.name || "Dummy"}</h4>
+          <ChatName className="text-center" name={chat.name} />
         </div>
         {canEdit && (
           <div className="flex justify-end">
