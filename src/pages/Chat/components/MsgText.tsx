@@ -1,21 +1,23 @@
 import { cn, segregateMsgText } from "lib/utils";
 import MsgLink from "./MsgLink";
+import MsgDid from "./MsgDid";
 
 type Props = {
   text: string;
   className?: string;
-  linkHidden?: boolean;
+  isShortPreview?: boolean;
 };
 
-const MsgText = ({ text, className, linkHidden = false }: Props) => {
+const MsgText = ({ text, className, isShortPreview = false }: Props) => {
   const { content, link, isValidLink } = segregateMsgText(text);
-  const showLink = isValidLink && !linkHidden;
+  const showLink = isValidLink && !isShortPreview;
 
   return (
     <>
       {showLink && <MsgLink link={link} />}
-
-      <div className={cn("text-sm font-normal select-none", className)}>
+      <div
+        className={cn("text-sm font-normal select-none break-words", className)}
+      >
         {content.map((m, idx) =>
           m.isLink ? (
             <a
@@ -27,8 +29,10 @@ const MsgText = ({ text, className, linkHidden = false }: Props) => {
             >
               {m.text + " "}
             </a>
+          ) : m.isDid ? (
+            <MsgDid key={idx} did={m.text} isShortPreview={isShortPreview} />
           ) : (
-            m.text + " "
+            <span key={idx}>{m.text + " "}</span>
           )
         )}
       </div>

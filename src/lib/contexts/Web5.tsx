@@ -12,13 +12,10 @@ import { Web5 } from "@web5/api";
 import { ProtocolDefinition } from "lib/protocols";
 import SpinnerOverlay from "components/SpinnerOverlay";
 
-// const DID_STORAGE_KEY = "did-key";
-
 interface Web5ContextType {
   web5: Web5 | null;
   did: string | null;
   loading: boolean;
-  //   error: string | null;
   connect: () => void;
   disconnect: () => void;
 }
@@ -39,7 +36,9 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
 
   const connect = useCallback(async () => {
     try {
-      const { web5, did } = await Web5.connect({ sync: "2s" });
+      const { web5, did } = await Web5.connect({
+        sync: "2s",
+      });
 
       setWeb5(web5);
       setDid(did);
@@ -101,7 +100,6 @@ export const Web5Provider = ({ children }: PropsWithChildren) => {
       web5,
       did,
       loading,
-      //   error,
       connect,
       disconnect,
     }),

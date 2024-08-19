@@ -12,7 +12,7 @@ import {
   profileCreatedAtom,
   profileFetchedAtom,
 } from "lib/stores";
-import { fetchProfile, updateRecord } from "lib/utils";
+import { fetchProfile, isDid, updateRecord } from "lib/utils";
 import { useDebounce } from "./ui";
 
 export const useProfile = () => {
@@ -81,8 +81,6 @@ export const useProfile = () => {
 
       if (!response.record) return;
 
-      console.log("create profile", response);
-
       const data = await response.record.data.json();
       setProfile({ ...profile, ...data, recordId: response.record.id });
     } catch (error) {
@@ -135,8 +133,7 @@ export const useProfilesSearch = (existingContacts: ChatMember[]) => {
 
       if (!web5 || !did) return;
 
-      const isDid = search.startsWith("did:");
-      if (!isDid) return;
+      if (!isDid(search)) return;
 
       const member = await fetchProfile(web5, search);
 

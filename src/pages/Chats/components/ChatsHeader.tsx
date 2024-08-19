@@ -12,12 +12,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "components/ui/dropdown-menu";
-import { CopyButton } from "components/Buttons";
 import UserAvatar from "components/UserAvatar";
 import Dialog from "components/Dialog";
 import { ProfileForm, UploadAvatar } from "pages/Profile/components";
 import CreateGroup from "./CreateGroup";
 import CreateConversation from "./CreateConversation";
+import { DidDetails } from "pages/ChatSettings/components";
 
 const ChatsHeader = () => {
   const { profile, profileCreated } = useProfile();
@@ -48,14 +48,9 @@ const ChatsHeader = () => {
                 <UserAvatar src={profile.avatar} alias={profile.name} />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-64" align="end" forceMount>
+            <DropdownMenuContent forceMount>
               <DropdownMenuLabel className="font-normal">
-                <div className="flex items-center justify-center gap-4">
-                  <div className="truncate flex-1 text-gray-600">
-                    <span>{did}</span>
-                  </div>
-                  <CopyButton value={did || ""} />
-                </div>
+                <DidDetails did={did || ""} />
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={onProfileModalOpen}>
