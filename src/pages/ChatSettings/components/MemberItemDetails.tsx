@@ -2,11 +2,7 @@ import { ChatMember } from "lib/types";
 import { useProfile } from "lib/hooks";
 import UserAvatar from "components/UserAvatar";
 import { Button } from "components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
+import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover";
 import DidDetails from "./DidDetails";
 
 type Props = {
@@ -20,24 +16,24 @@ const MemberItemDetails = ({ member }: Props) => {
   return (
     <div className="flex items-center gap-2">
       <div className="flex justify-start overflow-hidden">
-        <DropdownMenu modal={false}>
-          <DropdownMenuTrigger asChild>
+        <Popover>
+          <PopoverTrigger asChild>
             <Button
               size="icon"
               variant="ghost"
-              className="relative rounded-full aspect-1 p-0 w-8 h-8"
+              className="relative w-8 h-8 p-0 rounded-full aspect-1"
             >
               <UserAvatar src={member.avatar} alias={member.name} />
             </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent forceMount>
+          </PopoverTrigger>
+          <PopoverContent className="w-full">
             <DidDetails className="p-2" did={member.did} />
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </PopoverContent>
+        </Popover>
       </div>
-      <div className="flex justify-start items-center flex-1 gap-1">
+      <div className="flex items-center justify-start flex-1 gap-1">
         <span className="text-md">{member.name}</span>{" "}
-        {isMe && <span className="text-slate-500 text-sm">You</span>}
+        {isMe && <span className="text-sm text-slate-500">You</span>}
       </div>
     </div>
   );

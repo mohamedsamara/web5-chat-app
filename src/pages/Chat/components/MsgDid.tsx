@@ -1,10 +1,7 @@
-import { Button } from "components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from "components/ui/dropdown-menu";
 import { QrCode } from "lucide-react";
+
+import { Button } from "components/ui/button";
+import { Popover, PopoverContent, PopoverTrigger } from "components/ui/popover";
 import { DidDetails } from "pages/ChatSettings/components";
 
 const MsgDid = ({
@@ -16,28 +13,29 @@ const MsgDid = ({
 }) => {
   if (isShortPreview)
     return (
-      <div className="flex items-center gap-1 max-w-full">
+      <div className="flex items-center max-w-full gap-1">
         <QrCode className="w-4 h-4 text-indigo-500" />
         <DidText did={did} />
       </div>
     );
+
   return (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
+    <Popover>
+      <PopoverTrigger asChild>
         <Button
           variant="none"
-          className="text-sm font-normal max-w-full p-0 h-auto flex"
+          className="flex h-auto max-w-full p-0 text-sm font-normal"
         >
-          <div className="flex items-center gap-1 max-w-full">
+          <div className="flex items-center max-w-full gap-1">
             <QrCode className="w-6 h-6 text-indigo-500" />
             <DidText did={did} />
           </div>
         </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent forceMount>
+      </PopoverTrigger>
+      <PopoverContent className="w-full">
         <DidDetails className="p-2" did={did} />
-      </DropdownMenuContent>
-    </DropdownMenu>
+      </PopoverContent>
+    </Popover>
   );
 };
 
