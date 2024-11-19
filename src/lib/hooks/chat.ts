@@ -552,7 +552,7 @@ export const useAttachment = ({
       setUrl(base64);
       cache[recordId] = base64;
     } catch (error) {
-      console.log("eeror", error);
+      console.log("error", error);
     } finally {
       setLoading(false);
     }
