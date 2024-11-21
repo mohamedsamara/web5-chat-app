@@ -324,7 +324,6 @@ export const segregateMsgText = (text: string) => {
 };
 
 export const isDid = (str: string) => {
-  // TODO: Need to check kif there is an existing utlity
   const didStr = str.split(":");
   const identifier = didStr[2];
   return str.startsWith("did:dht") && identifier.length === 52;
