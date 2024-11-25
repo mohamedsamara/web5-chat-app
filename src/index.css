@@ -80,7 +80,7 @@
   }
 }
 
-@layer layer {
+@layer utilities {
   /* Hide scrollbar for Chrome, Safari and Opera */
   .no-scrollbar::-webkit-scrollbar {
     display: none;
@@ -91,9 +91,7 @@
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-}
 
-@layer utilities {
   .fade-in {
     @apply visible opacity-100;
     transition: opacity 250ms ease-in, visibility 0ms ease-in 0ms;
